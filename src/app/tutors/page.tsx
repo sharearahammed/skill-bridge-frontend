@@ -31,14 +31,24 @@ export type Tutor = {
 };
 
 export default async function TutorsPage() {
-  const res = await fetcher('/api/tutors');
-  const tutors = res.data;
+  const res = await fetcher(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/allTutors/featured/tutor`,
+  );
+  const tutors: Tutor[] = res.data;
 
   return (
-    <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-      {tutors.map((tutor: Tutor) => (
-        <TutorCard key={tutor.id} tutor={tutor} />
-      ))}
-    </div>
+    <section className="bg-[#f0fbfb] ">
+      <div className="max-w-7xl mx-auto px-6 p-8">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">
+          Featured Tutors
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {tutors.map((tutor: Tutor) => (
+            <TutorCard key={tutor.id} tutor={tutor} />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
