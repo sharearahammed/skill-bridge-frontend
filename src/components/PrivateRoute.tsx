@@ -16,7 +16,7 @@ export default function PrivateRoute({ children, roles }: PrivateRouteProps) {
   useEffect(() => {
     getCurrentUser().then(user => {
       if (!user || !roles.includes(user.role)) {
-        router.push('/auth/login');
+        router.push('/login');
       } else {
         setAuthorized(true);
       }
