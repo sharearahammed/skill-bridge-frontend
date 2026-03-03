@@ -18,7 +18,7 @@ export default function TutorCard({ tutor }: { tutor: Tutor }) {
 
         <div>
           <h3 className="text-lg font-semibold text-gray-800">
-            {tutor.user.name}
+            {/* {tutor.user.name} */}
           </h3>
           <p className="text-sm text-gray-500">
             {/* {tutor.category?.name || "General Tutor"} */}
