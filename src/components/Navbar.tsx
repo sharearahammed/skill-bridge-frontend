@@ -1,31 +1,38 @@
-'use client';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { getCurrentUser, CurrentUser } from '../lib/auth';
+import Link from "next/link";
+import { userService } from "../services/user.service";
+import LogoutButton from "./LogoutButton";
 
-export default function Navbar() {
-  const [user, setUser] = useState<CurrentUser | null>(null);
+export default async function Navbar() {
+  const { data } = await userService.getSession();
+  const user = data?.user;
 
-  useEffect(() => {
-    getCurrentUser().then(setUser);
-  }, []);
+  console.log("user", user);
 
   return (
-    <nav className="bg-blue-600 p-4 text-white flex justify-between">
+    <nav className="bg-blue-600 p-4 text-white flex justify-between items-center">
       <div className="font-bold text-lg">SkillBridge</div>
-      <div className="space-x-4">
+      <div className="flex items-center space-x-4">
         <Link href="/">Home</Link>
         <Link href="/tutors">Browse Tutors</Link>
+
         {user ? (
           <>
             <Link href="/profile">Profile</Link>
-            {user.role === 'STUDENT' && <Link href="/dashboard/student">Dashboard</Link>}
-            {user.role === 'TUTOR' && <Link href="/dashboard/tutor">Dashboard</Link>}
-            {user.role === 'ADMIN' && <Link href="/dashboard/admin">Admin</Link>}
+            {user.role === "STUDENT" && (
+              <Link href="/dashboard/student">Student Dashboard</Link>
+            )}
+            {user.role === "TUTOR" && (
+              <Link href="/dashboard/tutor">Dashboard</Link>
+            )}
+            {user.role === "ADMIN" && (
+              <Link href="/dashboard/admin">Admin</Link>
+            )}
+
+            <LogoutButton user={user} />
           </>
         ) : (
           <>
-           <Link href="/login">Login</Link>
+            <Link href="/login">Login</Link>
             <Link href="/register">Register</Link>
           </>
         )}
