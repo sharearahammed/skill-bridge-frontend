@@ -145,7 +145,7 @@ export default function RegisterForm() {
         <button
           type="submit"
           disabled={form.state.isSubmitting}
-          className="bg-blue-600 text-white p-2 w-full"
+          className="bg-[#00B5BA] text-white p-2 w-full rounded"
         >
           {form.state.isSubmitting ? "Registering..." : "Register"}
         </button>

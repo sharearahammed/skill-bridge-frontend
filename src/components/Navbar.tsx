@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { userService } from "../services/user.service";
 import LogoutButton from "./LogoutButton";
+import { PiPencilLight } from "react-icons/pi";
 
 export default async function Navbar() {
   const { data } = await userService.getSession();
@@ -9,13 +10,17 @@ export default async function Navbar() {
   console.log("user", user);
 
   return (
-    <nav className="bg-blue-600 p-4 text-white flex justify-between items-center">
-      <div className="font-bold text-lg">SkillBridge</div>
+    <nav className="bg-[#FFFFFF] p-4 flex justify-between items-center">
+      <div className="font-bold text-lg flex items-end text-[#00B5BA]">
+        <PiPencilLight className="text-5xl transform scale-x-[-1]" />
+        <p className="text-xl">SkillBridge</p>
+      </div>
       <div className="flex items-center space-x-4">
         <Link href="/">Home</Link>
         <Link href="/tutors">Browse Tutors</Link>
-
-        {user ? (
+      </div>
+      <div>
+        {!user ? (
           <>
             <Link href="/profile">Profile</Link>
             {user.role === "STUDENT" && (
@@ -31,10 +36,14 @@ export default async function Navbar() {
             <LogoutButton user={user} />
           </>
         ) : (
-          <>
-            <Link href="/login">Login</Link>
-            <Link href="/register">Register</Link>
-          </>
+          <div className="flex items-center gap-4">
+            <div>
+              <Link href="/login">Login</Link>
+            </div>
+            <div className="bg-[#00B5BA] px-5 py-2 rounded-full text-[#ffff] ">
+              <Link href="/register">Sign Up</Link>
+            </div>
+          </div>
         )}
       </div>
     </nav>

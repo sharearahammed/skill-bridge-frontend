@@ -68,14 +68,14 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            className="w-full bg-[#00B5BA] text-white py-2 rounded hover:bg-blue-700"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
         <p className="mt-4 text-sm text-gray-500 text-center">
           Don't have an account?{" "}
-          <a href="/auth/register" className="text-blue-600 hover:underline">
+          <a href="/auth/register" className="text-[#00B5BA] hover:underline">
             Register
           </a>
         </p>
