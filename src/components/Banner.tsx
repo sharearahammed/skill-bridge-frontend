@@ -47,7 +47,7 @@ export default function Banner() {
             </button>
 
             <button className="border border-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-black transition">
-              {/* Become a Tutor */}
+              Become a Tutor
             </button>
           </div>
         </div>

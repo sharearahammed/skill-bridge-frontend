@@ -54,7 +54,7 @@ export default function CategoriesSection() {
 
                 {/* Category Name */}
                 <h3 className="text-xl font-semibold text-gray-800 group-hover:text-[#00B5BA] transition-colors">
-                  {category.name}
+                  {/* {category.name} */}
                 </h3>
 
                 {/* Small Description */}
