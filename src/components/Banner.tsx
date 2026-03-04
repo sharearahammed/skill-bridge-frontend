@@ -14,7 +14,7 @@ export default function Banner() {
       />
 
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/50"></div>
+      <div className="absolute inset-0 bg-black/40"></div>
 
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-6 w-full text-white">

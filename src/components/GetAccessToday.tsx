@@ -1,55 +1,56 @@
 "use client";
 
-import Image from "next/image";
 import backgroundImage from "../assets/getAccess.jpg";
 import Link from "next/link";
 
 export default function GetAccessToday() {
   return (
-    <section className="relative w-full min-h-[650px] flex items-center">
-      {/* Background Image */}
-      <Image
-        src={backgroundImage}
-        alt="Get Access Today"
-        className="absolute inset-0 w-full h-full object-cover"
-        priority
-      />
+    <section
+      className="relative w-full min-h-[700px] flex items-center bg-fixed bg-center bg-cover"
+      style={{
+        backgroundImage: `url(${backgroundImage.src})`,
+      }}
+    >
+      {/* Soft dark overlay */}
+      <div className="absolute inset-0 bg-black/40"></div>
 
-      {/* Overlay Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
+      <div className="relative max-w-7xl mx-auto px-6">
+        <div className="text-white">
 
-      {/* Decorative Circles */}
-      <div className="absolute -top-16 -left-16 w-40 h-40 bg-[#00B5BA]/20 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-[#5672C4]/20 rounded-full blur-3xl animate-pulse"></div>
+          {/* Tagline */}
+          <p className="uppercase tracking-widest text-sm text-[#00B5BA] font-semibold mb-4">
+            Learn Smarter
+          </p>
 
-      {/* Content */}
-      <div className="relative max-w-4xl mx-auto px-6 text-center text-white">
-        {/* Main Heading */}
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-          Get Access Today!
-        </h1>
+          {/* Heading */}
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
+            Unlock Your Potential <br /> With Expert Tutors
+          </h1>
 
-        {/* Small Bio */}
-        <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-          Join thousands of learners and unlock personalized tutoring sessions 
-          tailored to your goals. Start improving today and reach your full potential.
-        </p>
+          {/* Description */}
+          <p className="text-lg text-gray-200 mb-10 leading-relaxed">
+            Personalized tutoring sessions designed to help you achieve
+            academic excellence and real-world skills. Learn at your pace,
+            from the best.
+          </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center gap-6">
-          <Link
-            href="/register"
-            className="bg-[#00B5BA] hover:bg-[#00a7aa] text-white px-12 py-4 rounded-full font-semibold text-lg shadow-lg transform transition-all duration-300 hover:scale-105"
-          >
-            Join Now
-          </Link>
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-5">
+            <Link
+              href="/register"
+              className="bg-[#00B5BA] hover:bg-[#009ca1] text-white px-10 py-4 rounded-md font-semibold text-lg transition-all duration-300"
+            >
+              Get Started
+            </Link>
 
-          <Link
-            href="/tutors"
-            className="border-2 border-white text-white hover:bg-white hover:text-black px-12 py-4 rounded-full font-semibold text-lg transition-all duration-300"
-          >
-            Browse Tutors
-          </Link>
+            <Link
+              href="/tutors"
+              className="border border-white text-white hover:bg-white hover:text-black px-10 py-4 rounded-md font-semibold text-lg transition-all duration-300"
+            >
+              Browse Tutors
+            </Link>
+          </div>
+
         </div>
       </div>
     </section>

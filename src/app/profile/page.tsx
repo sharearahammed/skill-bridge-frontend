@@ -10,7 +10,7 @@ export default async function ProfilePage() {
   if (!user) return <p className="text-center mt-20">Loading...</p>;
 
   return (
-    <div className="max-w-3xl mx-auto mt-12 px-6">
+    <div className="mb-28 max-w-3xl mx-auto mt-12 px-6">
       {user.role === "STUDENT" && <StudentProfileForm user={user} />}
       {user.role === "TUTOR" && <TutorProfileForm user={user} />}
       {user.role === "ADMIN" && <AdminProfileForm user={user} />}

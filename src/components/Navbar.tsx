@@ -25,7 +25,7 @@ export default async function Navbar() {
         <Link href="/tutors" className="hover:text-[#5672C4] transition">
           Browse Tutors
         </Link>
-        {user.role === "STUDENT" && (
+        {user?.role === "STUDENT" && (
           <Link
             href="/dashboard/student"
             className="text-gray-700 hover:text-[#5672C4] transition"
@@ -33,7 +33,7 @@ export default async function Navbar() {
             Student Dashboard
           </Link>
         )}
-        {user.role === "TUTOR" && (
+        {user?.role === "TUTOR" && (
           <Link
             href="/dashboard/tutor"
             className="text-gray-700 hover:text-[#5672C4] transition"
@@ -41,7 +41,7 @@ export default async function Navbar() {
             Tutor Dashboard
           </Link>
         )}
-        {user.role === "ADMIN" && (
+        {user?.role === "ADMIN" && (
           <Link
             href="/dashboard/admin"
             className="text-gray-700 hover:text-[#5672C4] transition"
