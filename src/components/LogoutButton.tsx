@@ -62,12 +62,11 @@ export default function LogoutButton({ user }: LogoutButtonProps) {
         onClick={() => setOpen((prev) => !prev)}
         className="focus:outline-none cursor-pointer"
       >
-        <div className="w-12 h-12 relative rounded-full overflow-hidden">
+        <div className="relative w-12 h-12 rounded-full overflow-hidden cursor-pointer border-2 border-[#00B5BA]/30 hover:border-[#00B5BA] transition">
           <Image
             src={user.image || defaultImage}
             alt={user.name}
-            width={user.image ? 32 : 50}
-            height={user.image ? 32 : 50}
+            fill
             className="object-cover rounded-full"
             priority
           />
