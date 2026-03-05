@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { userService } from "../services/user.service";
-import LogoutButton from "./LogoutButton";
+import { userService } from "../../services/user.service";
+import LogoutButton from "../LogoutButton";
 import { PiPencilLight } from "react-icons/pi";
 
 export default async function Navbar() {

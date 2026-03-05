@@ -1,4 +1,4 @@
-import TutorCard from "@/src/components/TutorCard";
+import TutorCard from "@/src/components/Tutor/TutorCard";
 import { fetcher } from "@/src/lib/fetcher";
 
 type User = {

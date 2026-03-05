@@ -34,8 +34,8 @@ export default function LogoutButton({ user }: LogoutButtonProps) {
       credentials: "include",
     });
 
-    router.refresh();
     router.push("/");
+    router.refresh();
   };
 
   // Click outside to close dropdown
@@ -83,9 +83,19 @@ export default function LogoutButton({ user }: LogoutButtonProps) {
           >
             Profile
           </Link>
+          {user?.role === "STUDENT" && (
+            <Link
+              href="/my-booking"
+              className="block px-4 py-2 hover:bg-gray-100 transition"
+              onClick={() => setOpen(false)}
+            >
+              My Booking
+            </Link>
+          )}
+
           <button
             onClick={handleLogout}
-            className="block w-full text-left px-4 py-2 hover:bg-red-500 hover:text-white rounded-md"
+            className="cursor-pointer block w-full text-left px-4 py-2 hover:bg-red-500 hover:text-white rounded-md"
           >
             Logout
           </button>

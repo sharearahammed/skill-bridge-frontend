@@ -39,6 +39,7 @@ export default function LoginForm() {
 
         toast.success("Logged in successfully!");
         router.push("/");
+        router.refresh();
       } catch (err: unknown) {
         if (err instanceof Error) toast.error(err.message);
         else toast.error("Something went wrong");

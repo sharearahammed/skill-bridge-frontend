@@ -1,7 +1,7 @@
-export default function TutorDashboard() {
-  return (
-    <div>
-      <h2>Tutor Dashboard</h2>
-    </div>
-  );
+// app/dashboard/tutor/page.tsx
+import { redirect } from "next/navigation";
+
+export default function TutorIndex() {
+  // Redirect immediately to availability-slots
+  redirect("/dashboard/tutor/availability");
 }

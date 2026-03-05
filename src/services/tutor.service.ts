@@ -19,6 +19,7 @@ export const getTutorById = async (id: string) => {
 
 // Booking function
 export const bookTutor = async (availabilityId: string) => {
+  console.log("availabilityId", availabilityId);
   try {
     const res = await fetch("http://localhost:5000/booking", {
       method: "POST",

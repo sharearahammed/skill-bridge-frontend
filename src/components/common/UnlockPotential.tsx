@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { FaBookOpen, FaUserGraduate } from "react-icons/fa";
-import middleImage from "../assets/PremiumContent.webp";
+import middleImage from "../../assets/PremiumContent.webp";
 
 export default function UnlockPotential() {
   return (

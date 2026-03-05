@@ -1,8 +1,8 @@
-import Banner from "../components/Banner";
+import Banner from "../components/common/Banner";
 import CategoriesSection from "../components/CategoriesSection";
-import GetAccessToday from "../components/GetAccessToday";
-import HowItWorks from "../components/HowItWorks";
-import UnlockPotential from "../components/UnlockPotential";
+import GetAccessToday from "../components/common/GetAccessToday";
+import HowItWorks from "../components/common/HowItWorks";
+import UnlockPotential from "../components/common/UnlockPotential";
 import TutorsPage from "./tutors/page";
 
 export default function Home() {

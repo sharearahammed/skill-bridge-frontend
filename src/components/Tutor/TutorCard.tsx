@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
-import defaultImage from "../assets/people avatar.png";
+import defaultImage from "../../assets/people avatar.png";
 
 type Tutor = {
   id: string;

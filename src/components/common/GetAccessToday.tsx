@@ -1,6 +1,6 @@
 "use client";
 
-import backgroundImage from "../assets/getAccess.jpg";
+import backgroundImage from "../../assets/getAccess.jpg";
 import Link from "next/link";
 
 export default function GetAccessToday() {

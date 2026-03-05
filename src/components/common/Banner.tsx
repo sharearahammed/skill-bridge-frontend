@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import bannerImage from "../assets/hero-image.webp";
+import bannerImage from "../../assets/hero-image.webp";
 
 export default function Banner() {
   return (
