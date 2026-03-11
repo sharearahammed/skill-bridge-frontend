@@ -15,15 +15,13 @@ type StudentProfileFormProps = {
   user: StudentUser;
 };
 
-export default function StudentProfileForm({
-  user,
-}: StudentProfileFormProps) {
+export default function StudentProfileForm({ user }: StudentProfileFormProps) {
   const [name, setName] = useState<string>(user.name);
   const [image, setImage] = useState<string | undefined>(
-    user.image || undefined
+    user.image || undefined,
   );
   const [preview, setPreview] = useState<string | undefined>(
-    user.image || undefined
+    user.image || undefined,
   );
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -31,13 +29,18 @@ export default function StudentProfileForm({
     try {
       setLoading(true);
 
-      const res = await fetch("/api/profile/update", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, image }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/student/${user.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, image }),
+        },
+      );
 
-      if (!res.ok) throw new Error("Update failed");
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Update failed");
 
       toast.success("Profile updated successfully");
     } catch (err: unknown) {
@@ -50,9 +53,7 @@ export default function StudentProfileForm({
 
   return (
     <div className="bg-white shadow-lg rounded-2xl p-8 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-8">
-        Student Profile
-      </h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-8">Student Profile</h2>
 
       {/* Profile Image */}
       <div className="flex items-center gap-6 mb-8">
