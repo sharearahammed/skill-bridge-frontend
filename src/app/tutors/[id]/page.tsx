@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import defaultImage from "../../../assets/people avatar.png";
-import { getTutorById, bookTutor } from "@/src/services/tutor.service";
+import { getTutorById } from "@/src/services/tutor.service";
 import BookingForm from "@/src/components/BookingForm";
 
 type Review = {
@@ -29,7 +29,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
           ) / tutor.reviews.length
         ).toFixed(1)
       : "0.0";
-
+  console.log({ tutor });
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       <div className="bg-white rounded-2xl shadow-lg p-8">
@@ -79,7 +79,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
 
           <div className="flex flex-wrap gap-3">
             {tutor.tutorSubjects.map(
-              (subject: { id: string; category: { name: string } }) => ( 
+              (subject: { id: string; category: { name: string } }) => (
                 <span
                   key={subject.id}
                   className="bg-[#00B5BA]/10 text-[#00B5BA] px-4 py-2 rounded-full text-sm font-medium"
@@ -94,10 +94,13 @@ export default async function TutorProfilePage({ params }: PageProps) {
         {/* Availability */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-3 text-gray-800">
-            Availability
+            Book a Slot
           </h2>
 
-          <BookingForm availability={tutor.availability} />
+          <BookingForm
+            tutorSubjects={tutor.tutorSubjects}
+            availability={tutor.availability}
+          />
         </div>
 
         {/* Reviews */}

@@ -11,7 +11,9 @@ type Subject = {
 export default function AvailabilitySection() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [availability, setAvailability] = useState<{[key: string]: {startTime: string, endTime: string}}>({});
+  const [availability, setAvailability] = useState<{
+    [key: string]: { startTime: string; endTime: string };
+  }>({});
   const [loading, setLoading] = useState(false);
 
   // Fetch all subjects
@@ -36,41 +38,34 @@ export default function AvailabilitySection() {
   };
 
   // Handle availability change
-  const handleAvailabilityChange = (subjectId: string, field: "startTime" | "endTime", value: string) => {
+  const handleAvailabilityChange = (
+    subjectId: string,
+    field: "startTime" | "endTime",
+    value: string
+  ) => {
     setAvailability(prev => ({
       ...prev,
       [subjectId]: { ...prev[subjectId], [field]: value },
     }));
   };
 
-  // Submit selected subjects
-  const submitSubjects = async () => {
-    if (selectedSubjects.length === 0) return toast.error("Select at least one subject");
+  // Combined function: add subject if not added, then add availability
+  const handleAddAvailability = async (subjectId: string) => {
+    const avail = availability[subjectId];
+    if (!avail?.startTime || !avail?.endTime)
+      return toast.error("Select start and end time");
+
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tutorSubject/subjects`, {
+      // 1️⃣ Add subject (if not already selected on backend)
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tutorSubject/subjects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ categoryIds: selectedSubjects }),
+        body: JSON.stringify({ categoryIds: [subjectId] }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to add subjects");
-      toast.success("Subjects added successfully!");
-    } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  // Submit availability for a subject
-  const submitAvailability = async (subjectId: string) => {
-    const avail = availability[subjectId];
-    if (!avail?.startTime || !avail?.endTime) return toast.error("Select start and end time");
-
-    setLoading(true);
-    try {
+      // 2️⃣ Add availability
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tutor/availability`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -83,7 +78,8 @@ export default function AvailabilitySection() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to add availability");
-      toast.success("Availability added!");
+
+      toast.success("Subject & Availability added!");
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
     } finally {
@@ -113,13 +109,6 @@ export default function AvailabilitySection() {
             </button>
           ))}
         </div>
-        <button
-          onClick={submitSubjects}
-          disabled={loading}
-          className="mt-4 px-6 py-2 bg-[#00B5BA] text-white rounded-lg hover:bg-[#009fa3] transition"
-        >
-          Add Subjects
-        </button>
       </div>
 
       {/* Availability Section */}
@@ -143,7 +132,7 @@ export default function AvailabilitySection() {
                 className="border rounded-lg p-2 flex-1"
               />
               <button
-                onClick={() => submitAvailability(subjectId)}
+                onClick={() => handleAddAvailability(subjectId)}
                 disabled={loading}
                 className="px-4 py-2 bg-[#00B5BA] text-white rounded-lg hover:bg-[#009fa3] transition"
               >

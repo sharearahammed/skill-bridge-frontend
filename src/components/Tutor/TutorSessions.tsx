@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
@@ -136,9 +137,12 @@ export default function TutorSessions() {
           {/* Student Info */}
           <div className="flex items-center gap-4">
             {session.student.image ? (
-              <img
+              <Image
                 src={session.student.image}
-                className="w-14 h-14 rounded-full object-cover"
+                alt={session.student.name}
+                width={56}
+                height={56}
+                className="rounded-full object-cover"
               />
             ) : (
               <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">

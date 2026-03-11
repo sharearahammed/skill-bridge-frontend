@@ -32,7 +32,6 @@ export default function TutorCard({ tutor }: { tutor: Tutor }) {
           tutor.reviews.length
         ).toFixed(1)
       : "0.0";
-  console.log("tutor", tutor);
   return (
     <div
       className="bg-white border border-gray-100 rounded-2xl p-6 
