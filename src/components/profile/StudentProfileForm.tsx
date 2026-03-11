@@ -8,6 +8,7 @@ import { FaCamera } from "react-icons/fa";
 type StudentUser = {
   id: string;
   name: string;
+  email: string;
   image?: string | null;
 };
 
@@ -17,12 +18,9 @@ type StudentProfileFormProps = {
 
 export default function StudentProfileForm({ user }: StudentProfileFormProps) {
   const [name, setName] = useState<string>(user.name);
-  const [image, setImage] = useState<string | undefined>(
-    user.image || undefined,
-  );
-  const [preview, setPreview] = useState<string | undefined>(
-    user.image || undefined,
-  );
+  const [email, setEmail] = useState<string>(user.email);
+  const [image, setImage] = useState<string | undefined>(user.image || undefined);
+  const [preview, setPreview] = useState<string | undefined>(user.image || undefined);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async () => {
@@ -34,8 +32,8 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, image }),
-        },
+          body: JSON.stringify({ name, email, image }),
+        }
       );
 
       const data = await res.json();
@@ -91,15 +89,22 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
       </div>
 
       {/* Name */}
-      <div className="mb-8">
-        <label className="block text-sm font-medium text-gray-600 mb-2">
-          Full Name
-        </label>
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-600 mb-2">Full Name</label>
         <input
           value={name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setName(e.target.value)
-          }
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5BA] transition"
+        />
+      </div>
+
+      {/* Email */}
+      <div className="mb-8">
+        <label className="block text-sm font-medium text-gray-600 mb-2">Email</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5BA] transition"
         />
       </div>

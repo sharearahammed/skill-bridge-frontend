@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function StudentSidebar() {
+export default function AdminSidebar() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/dashboard/student/my-booking", label: "My Booking" },
+    { href: "/dashboard/admin/users", label: "Users" },
+    { href: "/dashboard/admin/bookings", label: "Bookings" },
+    { href: "/dashboard/admin/categories", label: "Categories" },
   ];
 
   return (
     <div className="w-64 h-screen bg-white border-r shadow-lg p-6 flex flex-col">
-      <h2 className="text-2xl font-bold mb-8 text-gray-800">Student Dashboard</h2>
+      <h2 className="text-2xl font-bold mb-8 text-gray-800">Admin Dashboard</h2>
 
       <nav className="flex flex-col gap-3">
         {links.map((link) => {

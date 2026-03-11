@@ -32,11 +32,8 @@ export default function TutorSessions() {
       if (!res.ok) throw new Error(data.message);
       setSessions(data.data);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Something went wrong");
-      }
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -64,11 +61,8 @@ export default function TutorSessions() {
       toast.success("Status updated");
       fetchSessions();
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Something went wrong");
-      }
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("Something went wrong");
     }
   };
 
@@ -105,7 +99,12 @@ export default function TutorSessions() {
   const formatDate = (start: string, end: string) => {
     const s = new Date(start);
     const e = new Date(end);
-    return `${s.toLocaleDateString()} ${s.toLocaleTimeString()} - ${e.toLocaleTimeString()}`;
+    return `${s.toLocaleDateString(undefined, {
+      dateStyle: "medium",
+    })} ${s.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${e.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
   };
 
   const statusColor = (status: string) => {
@@ -123,16 +122,27 @@ export default function TutorSessions() {
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (loading)
+    return (
+      <p className="text-center mt-10 text-gray-500 animate-pulse text-lg">
+        Loading sessions...
+      </p>
+    );
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <h2 className="text-2xl font-bold">My Booking Sessions</h2>
+    <div className="max-w-7xl mx-auto space-y-6">
+      <h2 className="text-3xl font-bold text-gray-800 mb-4">
+        My Booking Sessions
+      </h2>
+
+      {sessions.length === 0 && (
+        <p className="text-gray-500 text-center">No sessions found</p>
+      )}
 
       {sessions.map((session) => (
         <div
           key={session.id}
-          className="bg-white shadow rounded-xl p-6 flex justify-between items-center"
+          className="bg-white shadow-lg rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         >
           {/* Student Info */}
           <div className="flex items-center gap-4">
@@ -145,22 +155,21 @@ export default function TutorSessions() {
                 className="rounded-full object-cover"
               />
             ) : (
-              <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold text-lg">
                 {session.student.name[0]}
               </div>
             )}
-
             <div>
-              <p className="font-semibold">{session.student.name}</p>
+              <p className="font-semibold text-gray-800">{session.student.name}</p>
               <p className="text-sm text-gray-500">{session.student.email}</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 mt-1">
                 {formatDate(session.startTime, session.endTime)}
               </p>
             </div>
           </div>
 
           {/* Status + Actions */}
-          <div className="flex flex-col items-end gap-3">
+          <div className="flex flex-col sm:items-end gap-3 mt-2 sm:mt-0">
             <span
               className={`px-3 py-1 text-sm rounded-full font-medium ${statusColor(
                 session.status,
@@ -170,17 +179,16 @@ export default function TutorSessions() {
             </span>
 
             {session.status === "PENDING" && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <button
                   onClick={() => handleStatusChange(session.id, "CONFIRMED")}
-                  className="cursor-pointer px-4 py-1 bg-green-600 text-white rounded-md text-sm"
+                  className="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition"
                 >
                   Confirm
                 </button>
-
                 <button
                   onClick={() => handleStatusChange(session.id, "CANCELLED")}
-                  className="cursor-pointer px-4 py-1 bg-red-600 text-white rounded-md text-sm"
+                  className="px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition"
                 >
                   Reject
                 </button>
@@ -190,7 +198,7 @@ export default function TutorSessions() {
             {session.status === "CONFIRMED" && (
               <button
                 onClick={() => handleStatusChange(session.id, "COMPLETED")}
-                className="px-4 py-1 bg-blue-600 text-white rounded-md text-sm"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition"
               >
                 Mark Completed
               </button>
