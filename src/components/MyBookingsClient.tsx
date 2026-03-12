@@ -402,7 +402,7 @@ export default function MyBookingsClient() {
         return (
           <div
             key={booking.id}
-            className="flex flex-col md:flex-row justify-between items-center gap-6 border rounded-2xl p-6 bg-white shadow-sm hover:shadow-lg transition"
+            className="flex flex-col md:flex-row justify-between items-center gap-6 rounded-2xl p-6 bg-white shadow-sm hover:shadow-lg transition"
           >
             <div className="flex items-center gap-4">
               <div className="relative w-20 h-20 rounded-full overflow-hidden">

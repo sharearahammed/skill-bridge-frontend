@@ -37,7 +37,7 @@ export default async function TutorsPage() {
   const tutors: Tutor[] = res.data;
 
   return (
-    <section className="bg-[#f0fbfb] ">
+    <section className="">
       <div className="max-w-7xl mx-auto px-6 p-8">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">
           Featured Tutors

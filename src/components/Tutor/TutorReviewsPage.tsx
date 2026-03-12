@@ -77,7 +77,9 @@ export default function TutorReviewsPage({ user }: TutorReviewsPageProps) {
   );
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
+      <h1 className="text-3xl font-bold text-gray-800">All Reviews</h1>
+
       {/* Custom Dropdown */}
       <div className="relative w-64" ref={dropdownRef}>
         <button
