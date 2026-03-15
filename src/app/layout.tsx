@@ -6,7 +6,7 @@ import Footer from "../components/common/Footer";
 import { cn } from "@/lib/utils";
 import { userService } from "../services/user.service";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -18,7 +18,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const { data } = await userService.getSession();
+  const { data } = await userService.getSession();
   const user = data?.user;
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
@@ -30,9 +30,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         ></ThemeProvider> */}
         <Navbar user={user} />
-        <div className="mt-20">
-          {children}
-        </div>
+        <div className="mt-10">{children}</div>
         <Footer />
         <Toaster richColors />
       </body>

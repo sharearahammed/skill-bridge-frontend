@@ -50,7 +50,7 @@ export default function GetAccessToday() {
             </Link>
 
             <Link
-              href="/tutors"
+              href="/tutors/all"
               className="border border-white text-white hover:bg-white hover:text-black 
               px-6 sm:px-8 md:px-10 py-3 sm:py-4 
               rounded-md font-semibold text-sm sm:text-base md:text-lg 

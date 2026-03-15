@@ -41,9 +41,8 @@ export default function CategoriesSection() {
             const Icon = category.icon;
 
             return (
-              <Link
+              <div
                 key={index}
-                href={`/tutors?category=${category.name}`}
                 className="group relative flex flex-col items-center bg-[#f0fbfb] 
                 rounded-xl p-6 sm:p-8 md:p-10 shadow-md 
                 hover:shadow-xl transition-all duration-300 
@@ -73,7 +72,7 @@ export default function CategoriesSection() {
 
                 {/* Decorative Shape */}
                 <div className="absolute -bottom-4 -right-4 w-16 sm:w-20 h-16 sm:h-20 bg-[#5672C4]/10 rotate-12 rounded-xl hidden md:block"></div>
-              </Link>
+              </div>
             );
           })}
         </div>

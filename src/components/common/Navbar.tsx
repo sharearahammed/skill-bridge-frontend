@@ -4,19 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import LogoutButton from "../LogoutButton";
 import { PiPencilLight } from "react-icons/pi";
-import { HiMenu,HiX } from "react-icons/hi";
+import { HiMenu, HiX } from "react-icons/hi";
 
 interface User {
   id: string;
   role: "STUDENT" | "TUTOR" | "ADMIN" | string;
   name: string;
   email?: string;
-  emailVerified?: boolean;
   image?: string | null;
-  phone?: string | null;
-  status?: "ACTIVE" | "INACTIVE";
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 interface NavbarProps {
@@ -33,14 +28,17 @@ export default function Navbar({ user }: NavbarProps) {
 
   if (user?.role === "STUDENT")
     navLinks.push({ href: "/dashboard/student", label: "Student Dashboard" });
+
   if (user?.role === "TUTOR")
     navLinks.push({ href: "/dashboard/tutor", label: "Tutor Dashboard" });
+
   if (user?.role === "ADMIN")
     navLinks.push({ href: "/dashboard/admin", label: "Admin Dashboard" });
 
   return (
     <nav className="bg-white w-full py-4 fixed top-0 z-50 drop-shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
       <div className="max-w-7xl mx-auto md:px-6 px-5 flex justify-between items-center">
+
         {/* Logo */}
         <Link href="/" className="inline-block">
           <div className="font-bold text-lg flex items-end text-[#00B5BA] gap-2 cursor-pointer">
@@ -57,9 +55,9 @@ export default function Navbar({ user }: NavbarProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="relative px-1 py-1 hover:text-[#5672C4] transition-all 
-                         after:content-[''] after:absolute after:bottom-0 after:left-0 
-                         after:w-0 after:h-0.5 after:bg-[#5672C4] after:transition-all 
+              className="relative px-1 py-1 hover:text-[#5672C4] transition-all
+                         after:content-[''] after:absolute after:bottom-0 after:left-0
+                         after:w-0 after:h-0.5 after:bg-[#5672C4] after:transition-all
                          hover:after:w-full"
             >
               {link.label}
@@ -67,23 +65,44 @@ export default function Navbar({ user }: NavbarProps) {
           ))}
         </div>
 
-        {/* User Section & Mobile Menu Button */}
-        <div className="flex items-center gap-4">
-          {user && <LogoutButton user={user} />}
+        {/* Desktop Auth Section */}
+        <div className="hidden md:flex items-center gap-4">
 
-          {/* Mobile Hamburger */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-gray-700 hover:text-[#5672C4] focus:outline-none"
-          >
-            {menuOpen ? <HiX size={28} /> : <HiMenu size={28} />}
-          </button>
+          {!user && (
+            <>
+              <Link
+                href="/login"
+                className="text-gray-700 hover:text-[#5672C4] font-medium transition"
+              >
+                Login
+              </Link>
+
+              <Link
+                href="/register"
+                className="bg-[#00B5BA] hover:bg-[#5672C4] text-white px-5 py-2 rounded-full font-semibold shadow-md transition"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+
+          {user && <LogoutButton user={user} />}
         </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden text-gray-700 hover:text-[#5672C4]"
+        >
+          {menuOpen ? <HiX size={28} /> : <HiMenu size={28} />}
+        </button>
+
       </div>
 
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-white w-full px-5 pb-5 flex flex-col space-y-3 border-t border-gray-200">
+
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -104,6 +123,7 @@ export default function Navbar({ user }: NavbarProps) {
               >
                 Login
               </Link>
+
               <Link
                 href="/register"
                 className="bg-[#00B5BA] hover:bg-[#5672C4] text-white px-5 py-2 rounded-full font-semibold shadow-md transition"
@@ -113,6 +133,8 @@ export default function Navbar({ user }: NavbarProps) {
               </Link>
             </div>
           )}
+
+          {user && <LogoutButton user={user} />}
         </div>
       )}
     </nav>

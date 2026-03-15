@@ -19,8 +19,12 @@ type StudentProfileFormProps = {
 export default function StudentProfileForm({ user }: StudentProfileFormProps) {
   const [name, setName] = useState<string>(user.name);
   const [email, setEmail] = useState<string>(user.email);
-  const [image, setImage] = useState<string | undefined>(user.image || undefined);
-  const [preview, setPreview] = useState<string | undefined>(user.image || undefined);
+  const [image, setImage] = useState<string | undefined>(
+    user.image || undefined,
+  );
+  const [preview, setPreview] = useState<string | undefined>(
+    user.image || undefined,
+  );
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async () => {
@@ -33,7 +37,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, image }),
-        }
+        },
       );
 
       const data = await res.json();
@@ -50,7 +54,7 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-8 max-w-2xl mx-auto">
+    <div className="mt-32 bg-white shadow-lg rounded-2xl p-8 max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold text-gray-800 mb-8">Student Profile</h2>
 
       {/* Profile Image */}
@@ -90,21 +94,29 @@ export default function StudentProfileForm({ user }: StudentProfileFormProps) {
 
       {/* Name */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-600 mb-2">Full Name</label>
+        <label className="block text-sm font-medium text-gray-600 mb-2">
+          Full Name
+        </label>
         <input
           value={name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setName(e.target.value)
+          }
           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5BA] transition"
         />
       </div>
 
       {/* Email */}
       <div className="mb-8">
-        <label className="block text-sm font-medium text-gray-600 mb-2">Email</label>
+        <label className="block text-sm font-medium text-gray-600 mb-2">
+          Email
+        </label>
         <input
           type="email"
           value={email}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5BA] transition"
         />
       </div>

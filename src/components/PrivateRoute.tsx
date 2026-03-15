@@ -1,28 +1,34 @@
-'use client';
+"use client";
 
-import { useEffect, useState, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-import { getCurrentUser, UserRole } from '../lib/auth';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-interface PrivateRouteProps {
-  children: ReactNode;
-  roles: UserRole[];
+interface RoleGuardProps {
+  user: {
+    role?: string;
+  } | null;
+  role: "STUDENT" | "TUTOR" | "ADMIN";
+  children: React.ReactNode;
 }
 
-export default function PrivateRoute({ children, roles }: PrivateRouteProps) {
-  const [authorized, setAuthorized] = useState(false);
+export default function PrivateRoute({ user, role, children }: RoleGuardProps ) {
+  console.log({ user });
   const router = useRouter();
 
   useEffect(() => {
-    getCurrentUser().then(user => {
-      if (!user || !roles.includes(user.role)) {
-        router.push('/login');
-      } else {
-        setAuthorized(true);
-      }
-    });
-  }, [router, roles]);
+    if (!user) {
+      router.push("/login");
+      return;
+    }
 
-  if (!authorized) return <div>Loading...</div>;
+    if (role && user.role !== role) {
+      router.push("/");
+    }
+  }, [user, role, router]);
+
+  if (!user) {
+    return <p className="p-10 text-center">Checking authentication...</p>;
+  }
+
   return <>{children}</>;
 }

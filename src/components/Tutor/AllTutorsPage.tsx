@@ -25,44 +25,55 @@ interface Tutor {
   _count: { reviews: number };
 }
 
-type Category = { id: string; name: string; createdAt: string };
+type Category = { id: string; name: string };
 
 export default function AllTutorsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const initialSearch = searchParams.get("search") || "";
+  const initialCategory = searchParams.get("categoryId") || "all";
+  const initialMinRating = Number(searchParams.get("minRating") || 0);
+  const initialMaxRate = Number(searchParams.get("maxRate") || 1000);
 
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+
   const [filters, setFilters] = useState({
     search: initialSearch,
-    categoryId: "all",
-    minRating: 0,
-    maxRate: 1000,
+    categoryId: initialCategory,
+    minRating: initialMinRating,
+    maxRate: initialMaxRate,
   });
 
-  // Fetch categories
+  // Fetch Categories
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/category`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/category`
+      );
       const data = await res.json();
-      setCategories(data.data);
+      setCategories(data.data || []);
     } catch (error) {
       console.error("Failed to fetch categories", error);
     }
   };
 
-  // Fetch tutors
+  // Fetch Tutors
   const fetchTutors = async (filt = filters) => {
     try {
       const params = new URLSearchParams();
+
       if (filt.search) params.append("search", filt.search);
-      if (filt.categoryId && filt.categoryId !== "all") params.append("categoryId", filt.categoryId);
+      if (filt.categoryId && filt.categoryId !== "all")
+        params.append("categoryId", filt.categoryId);
       if (filt.minRating) params.append("minRating", filt.minRating.toString());
       if (filt.maxRate) params.append("maxRate", filt.maxRate.toString());
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/allTutors?${params.toString()}`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/allTutors?${params.toString()}`
+      );
+
       const data = await res.json();
       setTutors(data.data || []);
     } catch (error) {
@@ -70,73 +81,77 @@ export default function AllTutorsPage() {
     }
   };
 
-  // Debounced search
-  const debouncedSearch = debounce((searchValue: string) => {
-    fetchTutors({ ...filters, search: searchValue });
+  // Update URL
+  const updateURL = (filt: typeof filters) => {
     const params = new URLSearchParams();
-    if (searchValue) params.append("search", searchValue);
-    if (filters.categoryId && filters.categoryId !== "all") params.append("categoryId", filters.categoryId);
-    router.replace(`/tutors/all?${params.toString()}`);
-  }, 500);
 
-  // Initial load
-  useEffect(() => {
-    fetchCategories();
-    fetchTutors({ ...filters, search: initialSearch });
-  }, []);
-
-  // Sync search from URL
-  useEffect(() => {
-    if (initialSearch) {
-      setFilters((prev) => ({ ...prev, search: initialSearch }));
-    }
-  }, [initialSearch]);
-
-  // Live search
-  useEffect(() => {
-    if (filters.search) {
-      debouncedSearch(filters.search);
-    }
-    return () => debouncedSearch.cancel();
-  }, [filters.search]);
-
-  // Apply Filters button
-  const handleApplyFilters = () => {
-    fetchTutors(filters);
-
-    const params = new URLSearchParams();
-    if (filters.search) params.append("search", filters.search);
-    if (filters.categoryId && filters.categoryId !== "all") params.append("categoryId", filters.categoryId);
-    if (filters.minRating) params.append("minRating", filters.minRating.toString());
-    if (filters.maxRate) params.append("maxRate", filters.maxRate.toString());
+    if (filt.search) params.append("search", filt.search);
+    if (filt.categoryId && filt.categoryId !== "all")
+      params.append("categoryId", filt.categoryId);
+    if (filt.minRating) params.append("minRating", filt.minRating.toString());
+    if (filt.maxRate) params.append("maxRate", filt.maxRate.toString());
 
     router.replace(`/tutors/all?${params.toString()}`);
   };
 
+  // Debounced Search
+  const debouncedSearch = debounce((searchValue: string) => {
+    const newFilters = { ...filters, search: searchValue };
+    fetchTutors(newFilters);
+    updateURL(newFilters);
+  }, 500);
+
+  // Initial Load
+  useEffect(() => {
+    fetchCategories();
+    fetchTutors(filters);
+  }, []);
+
+  // Live Search
+  useEffect(() => {
+    debouncedSearch(filters.search);
+
+    return () => debouncedSearch.cancel();
+  }, [filters.search]);
+
+  const handleApplyFilters = () => {
+    fetchTutors(filters);
+    updateURL(filters);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-gray-800 text-center sm:text-left">
+
+      {/* TITLE */}
+      <h1 className="mt-8 text-3xl sm:text-4xl font-bold mb-8 text-gray-800 text-center sm:text-left">
         Find Your Tutor
       </h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
+
         {/* FILTER SIDEBAR */}
         <div className="lg:w-1/4 flex-shrink-0 space-y-6">
           <Card className="p-6 space-y-6 shadow-lg border border-gray-100">
+
             <h3 className="font-semibold text-lg text-gray-700">Filters</h3>
 
             {/* Category */}
             <div className="space-y-1">
               <p className="text-sm font-medium text-gray-600">Category</p>
+
               <Select
                 value={filters.categoryId}
-                onValueChange={(value) => setFilters({ ...filters, categoryId: value })}
+                onValueChange={(value) =>
+                  setFilters({ ...filters, categoryId: value })
+                }
               >
                 <SelectTrigger className="border-gray-300 hover:border-[#00B5BA] focus:border-[#00B5BA]">
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
+
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
+
                   {categories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
                       {cat.name}
@@ -146,67 +161,96 @@ export default function AllTutorsPage() {
               </Select>
             </div>
 
-            {/* Min Rating */}
+            {/* Rating */}
             <div className="space-y-2">
               <p className="text-sm font-medium text-gray-600">
-                Min Rating: <span className="text-[#00B5BA]">{filters.minRating}</span>
+                Min Rating:
+                <span className="text-[#00B5BA] ml-1">
+                  {filters.minRating}
+                </span>
               </p>
+
               <Slider
-                defaultValue={[0]}
+                defaultValue={[filters.minRating]}
                 min={0}
                 max={5}
                 step={0.5}
-                className="accent-[#00B5BA]"
-                onValueChange={(value) => setFilters({ ...filters, minRating: value[0] })}
+                onValueChange={(value) =>
+                  setFilters({ ...filters, minRating: value[0] })
+                }
               />
             </div>
 
-            {/* Max Price */}
+            {/* Price */}
             <div className="space-y-2">
               <p className="text-sm font-medium text-gray-600">
-                Max Price: <span className="text-[#00B5BA]">${filters.maxRate}</span>
+                Max Price:
+                <span className="text-[#00B5BA] ml-1">
+                  ${filters.maxRate}
+                </span>
               </p>
+
               <Slider
-                defaultValue={[1000]}
+                defaultValue={[filters.maxRate]}
                 max={1000}
                 step={5}
-                className="accent-[#00B5BA]"
-                onValueChange={(value) => setFilters({ ...filters, maxRate: value[0] })}
+                onValueChange={(value) =>
+                  setFilters({ ...filters, maxRate: value[0] })
+                }
               />
             </div>
 
             <Button
               onClick={handleApplyFilters}
-              className="w-full bg-[#00B5BA] hover:bg-[#00979b] text-white font-semibold shadow-md transition-colors rounded-lg"
+              className="w-full bg-[#00B5BA] hover:bg-[#00979b] text-white font-semibold"
             >
               Apply Filters
             </Button>
+
           </Card>
         </div>
 
-        {/* TUTOR GRID */}
+        {/* TUTORS GRID */}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          {tutors.length === 0 && (
+            <p className="col-span-full text-center text-gray-500">
+              No tutors found
+            </p>
+          )}
+
           {tutors.map((tutor) => (
+
             <Card
               key={tutor.user.id}
               className="p-5 hover:shadow-2xl transition-transform transform hover:-translate-y-1 rounded-lg border border-gray-100 flex flex-col"
             >
+
               <div className="flex items-center gap-3">
-                <div className="w-16 h-16 relative rounded-full overflow-hidden border border-gray-200 flex-shrink-0">
+
+                <div className="w-16 h-16 relative rounded-full overflow-hidden border border-gray-200">
                   <Image
                     src={tutor.user.image || defaultImage}
-                    alt={tutor.user.name || "Tutor profile image"}
+                    alt={tutor.user.name}
                     fill
-                    sizes="96px"
                     className="object-cover"
                   />
                 </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-gray-800">{tutor.user.name}</p>
+
+                <div>
+                  <p className="font-semibold text-gray-800">
+                    {tutor.user.name}
+                  </p>
+
                   <p className="text-sm text-gray-500">
-                    ⭐ <span className="text-[#00B5BA]">{(tutor.rating || 0).toFixed(1)}</span> ({tutor._count.reviews} reviews)
+                    ⭐{" "}
+                    <span className="text-[#00B5BA]">
+                      {(tutor.rating || 0).toFixed(1)}
+                    </span>{" "}
+                    ({tutor._count.reviews} reviews)
                   </p>
                 </div>
+
               </div>
 
               {/* Subjects */}
@@ -214,7 +258,7 @@ export default function AllTutorsPage() {
                 {tutor.tutorSubjects.map((sub) => (
                   <span
                     key={sub.category.id}
-                    className="text-xs bg-[#E6F7F7] text-[#00B5BA] px-2 py-1 rounded-full font-medium"
+                    className="text-xs bg-[#E6F7F7] text-[#00B5BA] px-2 py-1 rounded-full"
                   >
                     {sub.category.name}
                   </span>
@@ -229,13 +273,16 @@ export default function AllTutorsPage() {
               <Link href={`/tutors/${tutor.user.id}`} className="mt-auto">
                 <Button
                   variant="outline"
-                  className="w-full mt-3 border-[#00B5BA] text-[#00B5BA] hover:bg-[#00B5BA] hover:text-white transition-colors font-medium"
+                  className="w-full mt-3 border-[#00B5BA] text-[#00B5BA] hover:bg-[#00B5BA] hover:text-white"
                 >
                   View Profile
                 </Button>
               </Link>
+
             </Card>
+
           ))}
+
         </div>
       </div>
     </div>

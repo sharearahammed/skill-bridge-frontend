@@ -3,6 +3,7 @@ import { FaStar } from "react-icons/fa";
 import defaultImage from "../../../assets/people avatar.png";
 import { getTutorById } from "@/src/services/tutor.service";
 import BookingForm from "@/src/components/BookingForm";
+import { userService } from "@/src/services/user.service";
 
 type Review = {
   rating: number;
@@ -16,6 +17,8 @@ type PageProps = {
 
 export default async function TutorProfilePage({ params }: PageProps) {
   const { id } = await params;
+  const { data } = await userService.getSession();
+  const user = data?.user;
 
   const response = await getTutorById(id);
   const tutor = response.data;
@@ -98,6 +101,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
           </h2>
 
           <BookingForm
+            user={user}
             tutorSubjects={tutor.tutorSubjects}
             availability={tutor.availability}
           />

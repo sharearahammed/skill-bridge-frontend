@@ -9,7 +9,7 @@ type Session = {
   id: string;
   startTime: string;
   endTime: string;
-  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED";
+  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "ATTEND";
   student: {
     name: string;
     email: string;
@@ -101,10 +101,13 @@ export default function TutorSessions() {
     const e = new Date(end);
     return `${s.toLocaleDateString(undefined, {
       dateStyle: "medium",
-    })} ${s.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${e.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`;
+    })} ${s.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${e.toLocaleTimeString(
+      [],
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+      },
+    )}`;
   };
 
   const statusColor = (status: string) => {
@@ -160,7 +163,9 @@ export default function TutorSessions() {
               </div>
             )}
             <div>
-              <p className="font-semibold text-gray-800">{session.student.name}</p>
+              <p className="font-semibold text-gray-800">
+                {session.student.name}
+              </p>
               <p className="text-sm text-gray-500">{session.student.email}</p>
               <p className="text-sm text-gray-600 mt-1">
                 {formatDate(session.startTime, session.endTime)}
@@ -195,7 +200,7 @@ export default function TutorSessions() {
               </div>
             )}
 
-            {session.status === "CONFIRMED" && (
+            {session.status === "ATTEND" && (
               <button
                 onClick={() => handleStatusChange(session.id, "COMPLETED")}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition"

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { User } from "./Admin/Users";
 
 type Availability = {
   id: string;
@@ -24,9 +25,11 @@ type TutorSubject = {
 };
 
 export default function BookingForm({
+  user,
   tutorSubjects,
   availability,
 }: {
+  user: User;
   tutorSubjects: TutorSubject[];
   availability: Availability[];
 }) {
@@ -36,11 +39,23 @@ export default function BookingForm({
   const router = useRouter();
 
   const handleBooking = async () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    if (user.role !== "STUDENT") {
+      toast.error("Only students can book sessions");
+      return;
+    }
+
+    // 2️⃣ Check slot selected
     if (!availabilityId) {
       toast.error("Please select a slot");
       return;
     }
 
+    // 3️⃣ Confirmation popup
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to book this slot?",
@@ -58,12 +73,15 @@ export default function BookingForm({
   const confirmBooking = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/booking`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ availabilityId }),
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ availabilityId }),
+          credentials: "include",
+        },
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Booking failed");
@@ -98,7 +116,7 @@ export default function BookingForm({
               ? availability.find((a) => a.id === availabilityId)?.startTime &&
                 formatTime(
                   availability.find((a) => a.id === availabilityId)!.startTime,
-                  availability.find((a) => a.id === availabilityId)!.endTime
+                  availability.find((a) => a.id === availabilityId)!.endTime,
                 )
               : "Select a slot"}
           </span>
@@ -109,7 +127,12 @@ export default function BookingForm({
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </div>
 
@@ -117,7 +140,7 @@ export default function BookingForm({
           <div className="absolute z-20 w-full mt-2 max-h-72 overflow-y-auto rounded-xl shadow-lg bg-white border border-gray-200 animate-slideDown">
             {tutorSubjects.map((subject) => {
               const subjectSlots = availability.filter(
-                (slot) => slot.subjectId === subject.category.id
+                (slot) => slot.subjectId === subject.category.id,
               );
               if (!subjectSlots.length) return null;
 
@@ -130,7 +153,9 @@ export default function BookingForm({
                     <div
                       key={slot.id}
                       className={`flex justify-between items-center px-4 py-2 cursor-pointer rounded-lg m-1 hover:bg-[#00B5BA]/20 transition ${
-                        availabilityId === slot.id ? "bg-[#00B5BA]/30 font-semibold text-white" : "text-gray-700"
+                        availabilityId === slot.id
+                          ? "bg-[#00B5BA]/30 font-semibold text-white"
+                          : "text-gray-700"
                       }`}
                       onClick={() => {
                         setAvailabilityId(slot.id);

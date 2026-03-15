@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import Swal from "sweetalert2";
 import defaultImage from "../../assets/people avatar.png";
 
-type User = {
+export type User = {
   id: string;
   name: string;
   email: string;

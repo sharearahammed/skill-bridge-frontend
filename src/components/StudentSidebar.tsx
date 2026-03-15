@@ -16,7 +16,7 @@ export default function StudentSidebar() {
   return (
     <>
       {/* Mobile Hamburger */}
-      <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b shadow-md">
+      <div className="lg:hidden sm:mt-9 mt-3 flex items-center justify-between p-4 bg-white border-b shadow-md">
         <h2 className="text-lg font-bold text-gray-800">Dashboard</h2>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -29,7 +29,7 @@ export default function StudentSidebar() {
       {/* Sidebar */}
       <div
         className={`
-          lg:sticky fixed lg:z-0 z-50 inset-y-0 left-0 w-64 bg-white border-r shadow-lg p-6
+          lg:sticky fixed mt-10 lg:z-0 z-50 inset-y-0 left-0 w-64 bg-white border-r shadow-lg p-6
           transform lg:translate-x-0 transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0
         `}
