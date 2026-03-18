@@ -74,7 +74,8 @@ export default function MyBookings() {
     setEditingReviewId(null);
     setIsModalOpen(true);
   };
-    console.log({ selectedBooking });
+  console.log({ selectedBooking });
+
   const handleReviewSubmit = async () => {
     if (!selectedBooking) return;
 

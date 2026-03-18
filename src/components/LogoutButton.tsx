@@ -5,19 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import defaultImage from "../assets/people avatar.png";
 import Link from "next/link";
-
-export type User = {
-  id: string;
-  name: string;
-  email: string;
-  emailVerified: boolean;
-  image?: string | null;
-  phone?: string | null;
-  role: "STUDENT" | "TUTOR" | "ADMIN";
-  status: "ACTIVE" | "INACTIVE";
-  createdAt: string;
-  updatedAt: string;
-};
+import { User } from "./common/Navbar";
 
 type LogoutButtonProps = {
   user: User;

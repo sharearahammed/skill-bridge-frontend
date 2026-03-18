@@ -30,7 +30,7 @@ export default function ContactPage() {
             Contact Us
           </h1>
           <p className="text-gray-500 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
-            Have questions? Reach out to us and we'll get back to you as soon as possible.
+            Have questions? Reach out to us and We&apos;ll get back to you as soon as possible.
           </p>
         </div>
 

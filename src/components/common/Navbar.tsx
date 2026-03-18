@@ -6,15 +6,20 @@ import LogoutButton from "../LogoutButton";
 import { PiPencilLight } from "react-icons/pi";
 import { HiMenu, HiX } from "react-icons/hi";
 
-interface User {
+export type User = {
   id: string;
-  role: "STUDENT" | "TUTOR" | "ADMIN" | string;
   name: string;
-  email?: string;
+  email: string;
+  emailVerified: boolean;
   image?: string | null;
-}
+  phone?: string | null;
+  role: "STUDENT" | "TUTOR" | "ADMIN";
+  status: "ACTIVE" | "INACTIVE";
+  createdAt: string;
+  updatedAt: string;
+};
 
-interface NavbarProps {
+export interface NavbarProps {
   user?: User | null;
 }
 

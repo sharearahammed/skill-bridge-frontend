@@ -6,17 +6,13 @@ import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-type LoginFormValues = {
-  email: string;
-  password: string;
-};
 
 export default function LoginForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm<LoginFormValues>({
+  const form = useForm({
     defaultValues: {
       email: "",
       password: "",
@@ -111,7 +107,7 @@ export default function LoginForm() {
 
         {/* Register Link */}
         <p className="mt-4 text-center text-gray-500 text-sm">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <a
             href="/register"
             className="text-[#00B5BA] font-medium hover:underline"
