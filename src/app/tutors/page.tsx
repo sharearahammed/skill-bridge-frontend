@@ -1,33 +1,23 @@
 import TutorCard from "@/src/components/Tutor/TutorCard";
 import { fetcher } from "@/src/lib/fetcher";
 
-type User = {
-  id: string;
-  name: string;
-  image?: string | null;
-};
-
-type TutorSubject = {
-  category: {
-    id: string;
-    name: string;
-  };
-};
-
-type Availability = {
-  id: string;
-  startTime: string;
-  endTime: string;
-};
-
 export type Tutor = {
   id: string;
-  bio?: string;
-  rating?: number;
-  pricePerHour?: number;
-  user: User;
-  tutorSubjects: TutorSubject[];
-  availability: Availability[];
+  bio: string;
+  rating: number;
+  pricePerHour: number;
+  user: {
+    id: string;
+    name: string;
+    image?: string | null;
+  };
+  reviews: { rating: number; comment: string }[];
+  reviewCount: number;
+  category: {
+    id: string;
+    categoryId: string;
+    category: { id: string; name: string };
+  }[];
 };
 
 export default async function TutorsPage() {
