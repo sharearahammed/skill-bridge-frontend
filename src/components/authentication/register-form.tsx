@@ -7,12 +7,8 @@ import { useState, DragEvent } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from "next/image";
 
-type RegisterFormValues = {
-  name: string;
-  email: string;
-  password: string;
-  role: "STUDENT" | "TUTOR";
-  image?: string | undefined;
+type ImageField = {
+  handleChange: (value: string) => void;
 };
 
 export default function RegisterForm() {
@@ -22,13 +18,13 @@ export default function RegisterForm() {
   const [isDragging, setIsDragging] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm<RegisterFormValues>({
+  const form = useForm({
     defaultValues: {
       name: "",
       email: "",
       password: "",
       role: "STUDENT",
-      image: undefined,
+      image: undefined as string | undefined,
     },
     onSubmit: async ({ value }) => {
       try {
@@ -53,7 +49,7 @@ export default function RegisterForm() {
     },
   });
 
-  const handleDrop = (e: DragEvent<HTMLLabelElement>, field: any) => {
+  const handleDrop = (e: DragEvent<HTMLLabelElement>, field: ImageField) => {
     e.preventDefault();
     setIsDragging(false);
 
