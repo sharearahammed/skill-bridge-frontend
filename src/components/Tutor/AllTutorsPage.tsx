@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -50,7 +50,7 @@ export default function AllTutorsPage() {
   const fetchCategories = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/category`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/category`,
       );
       const data = await res.json();
       setCategories(data.data || []);
@@ -60,8 +60,34 @@ export default function AllTutorsPage() {
   };
 
   // Fetch Tutors
-  const fetchTutors = async (filt = filters) => {
-    try {
+  const fetchTutors = useCallback(
+    async (filt = filters) => {
+      try {
+        const params = new URLSearchParams();
+
+        if (filt.search) params.append("search", filt.search);
+        if (filt.categoryId && filt.categoryId !== "all")
+          params.append("categoryId", filt.categoryId);
+        if (filt.minRating)
+          params.append("minRating", filt.minRating.toString());
+        if (filt.maxRate) params.append("maxRate", filt.maxRate.toString());
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/allTutors?${params.toString()}`,
+        );
+
+        const data = await res.json();
+        setTutors(data.data || []);
+      } catch (error) {
+        console.error("Failed to fetch tutors", error);
+      }
+    },
+    [filters],
+  );
+
+  // Update URL
+  const updateURL = useCallback(
+    (filt: typeof filters) => {
       const params = new URLSearchParams();
 
       if (filt.search) params.append("search", filt.search);
@@ -70,36 +96,21 @@ export default function AllTutorsPage() {
       if (filt.minRating) params.append("minRating", filt.minRating.toString());
       if (filt.maxRate) params.append("maxRate", filt.maxRate.toString());
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/allTutors?${params.toString()}`
-      );
-
-      const data = await res.json();
-      setTutors(data.data || []);
-    } catch (error) {
-      console.error("Failed to fetch tutors", error);
-    }
-  };
-
-  // Update URL
-  const updateURL = (filt: typeof filters) => {
-    const params = new URLSearchParams();
-
-    if (filt.search) params.append("search", filt.search);
-    if (filt.categoryId && filt.categoryId !== "all")
-      params.append("categoryId", filt.categoryId);
-    if (filt.minRating) params.append("minRating", filt.minRating.toString());
-    if (filt.maxRate) params.append("maxRate", filt.maxRate.toString());
-
-    router.replace(`/tutors/all?${params.toString()}`);
-  };
+      router.replace(`/tutors/all?${params.toString()}`);
+    },
+    [router],
+  );
 
   // Debounced Search
-  const debouncedSearch = debounce((searchValue: string) => {
-    const newFilters = { ...filters, search: searchValue };
-    fetchTutors(newFilters);
-    updateURL(newFilters);
-  }, 500);
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((searchValue: string) => {
+        const newFilters = { ...filters, search: searchValue };
+        fetchTutors(newFilters);
+        updateURL(newFilters);
+      }, 500),
+    [filters, fetchTutors, updateURL],
+  );
 
   // Initial Load
   useEffect(() => {
@@ -109,9 +120,12 @@ export default function AllTutorsPage() {
 
   // Live Search
   useEffect(() => {
-    debouncedSearch(filters.search);
+    const handler = setTimeout(() => {
+      fetchTutors(filters);
+      updateURL(filters);
+    }, 500);
 
-    return () => debouncedSearch.cancel();
+    return () => clearTimeout(handler);
   }, [filters.search]);
 
   const handleApplyFilters = () => {
@@ -121,18 +135,15 @@ export default function AllTutorsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
       {/* TITLE */}
       <h1 className="mt-8 text-3xl sm:text-4xl font-bold mb-8 text-gray-800 text-center sm:text-left">
         Find Your Tutor
       </h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
-
         {/* FILTER SIDEBAR */}
         <div className="lg:w-1/4 flex-shrink-0 space-y-6">
           <Card className="p-6 space-y-6 shadow-lg border border-gray-100">
-
             <h3 className="font-semibold text-lg text-gray-700">Filters</h3>
 
             {/* Category */}
@@ -165,9 +176,7 @@ export default function AllTutorsPage() {
             <div className="space-y-2">
               <p className="text-sm font-medium text-gray-600">
                 Min Rating:
-                <span className="text-[#00B5BA] ml-1">
-                  {filters.minRating}
-                </span>
+                <span className="text-[#00B5BA] ml-1">{filters.minRating}</span>
               </p>
 
               <Slider
@@ -185,9 +194,7 @@ export default function AllTutorsPage() {
             <div className="space-y-2">
               <p className="text-sm font-medium text-gray-600">
                 Max Price:
-                <span className="text-[#00B5BA] ml-1">
-                  ${filters.maxRate}
-                </span>
+                <span className="text-[#00B5BA] ml-1">${filters.maxRate}</span>
               </p>
 
               <Slider
@@ -206,13 +213,11 @@ export default function AllTutorsPage() {
             >
               Apply Filters
             </Button>
-
           </Card>
         </div>
 
         {/* TUTORS GRID */}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
           {tutors.length === 0 && (
             <p className="col-span-full text-center text-gray-500">
               No tutors found
@@ -220,14 +225,11 @@ export default function AllTutorsPage() {
           )}
 
           {tutors.map((tutor) => (
-
             <Card
               key={tutor.user.id}
               className="p-5 hover:shadow-2xl transition-transform transform hover:-translate-y-1 rounded-lg border border-gray-100 flex flex-col"
             >
-
               <div className="flex items-center gap-3">
-
                 <div className="w-16 h-16 relative rounded-full overflow-hidden border border-gray-200">
                   <Image
                     src={tutor.user.image || defaultImage}
@@ -250,7 +252,6 @@ export default function AllTutorsPage() {
                     ({tutor._count.reviews} reviews)
                   </p>
                 </div>
-
               </div>
 
               {/* Subjects */}
@@ -278,11 +279,8 @@ export default function AllTutorsPage() {
                   View Profile
                 </Button>
               </Link>
-
             </Card>
-
           ))}
-
         </div>
       </div>
     </div>
