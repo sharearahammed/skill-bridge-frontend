@@ -4,7 +4,7 @@ import defaultImage from "../../../assets/people avatar.png";
 import { getTutorById } from "@/src/services/tutor.service";
 import BookingForm from "@/src/components/BookingForm";
 import { userService } from "@/src/services/user.service";
-
+export const dynamic = "force-dynamic";
 type Review = {
   rating: number;
   comment: string;

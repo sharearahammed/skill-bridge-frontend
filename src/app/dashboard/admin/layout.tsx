@@ -1,12 +1,14 @@
 import AdminSidebar from "@/src/components/Admin/AdminSidebar";
 import PrivateRoute from "@/src/components/PrivateRoute";
 import { userService } from "@/src/services/user.service";
+export const dynamic = "force-dynamic";
 
 export default async function TutorDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  
   const { data } = await userService.getSession();
   const user = data?.user;
   return (

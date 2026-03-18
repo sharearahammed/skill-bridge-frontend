@@ -1,7 +1,7 @@
 import PrivateRoute from "@/src/components/PrivateRoute";
 import TutorSidebar from "@/src/components/Tutor/TutorSidebar";
 import { userService } from "@/src/services/user.service";
-
+export const dynamic = "force-dynamic";
 export default async function TutorDashboardLayout({
   children,
 }: {

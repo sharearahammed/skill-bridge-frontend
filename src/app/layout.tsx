@@ -6,6 +6,8 @@ import Footer from "../components/common/Footer";
 import { cn } from "@/lib/utils";
 import { userService } from "../services/user.service";
 
+export const dynamic = "force-dynamic";
+
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {

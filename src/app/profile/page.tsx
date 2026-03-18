@@ -2,7 +2,7 @@ import AdminProfileForm from "@/src/components/profile/AdminProfileForm";
 import StudentProfileForm from "@/src/components/profile/StudentProfileForm";
 import TutorProfileForm from "@/src/components/profile/TutorProfileForm";
 import { userService } from "@/src/services/user.service";
-
+export const dynamic = "force-dynamic";
 export default async function ProfilePage() {
   const { data } = await userService.getSession();
   const user = data?.user;
