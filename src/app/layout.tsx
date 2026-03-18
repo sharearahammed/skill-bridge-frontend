@@ -8,6 +8,14 @@ import { userService } from "../services/user.service";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
+export const metadata = {
+  title: "Skill Bridge",
+  description: "Online Tutor Booking Platform",
+  icons: {
+    icon: "../app/favicon.png",
+  },
+};
+
 const manrope = Manrope({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -23,12 +31,6 @@ export default async function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className={manrope.className}>
-        {/* <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        ></ThemeProvider> */}
         <Navbar user={user} />
         <div className="mt-10">{children}</div>
         <Footer />
