@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const apiFetch = async (url: string, options: RequestInit = {}) => {
   const auth = localStorage.getItem("auth");
