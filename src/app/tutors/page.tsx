@@ -23,6 +23,7 @@ export type Tutor = {
 export default async function TutorsPage() {
   const res = await fetcher(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/allTutors/featured/tutor`,
+    { cache: "no-store" },
   );
   const tutors: Tutor[] = res.data;
 
