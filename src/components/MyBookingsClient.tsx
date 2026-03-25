@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -155,11 +156,14 @@ export default function MyBookings() {
         >
           {/* Tutor Info */}
           <div className="flex items-center gap-4">
-            <img
-              src={booking.tutor.user.image || "/default-avatar.png"}
-              alt="Tutor"
-              className="w-14 h-14 rounded-full object-cover border-2 border-gray-100"
-            />
+            <div className="w-14 h-14 relative rounded-full border-2 border-gray-100 overflow-hidden">
+              <Image
+                src={booking.tutor.user.image || "/default-avatar.png"}
+                alt="Tutor"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+            </div>
             <div className="overflow-hidden">
               <h3 className="font-semibold text-gray-800 truncate">
                 {booking.tutor.user.name}
@@ -242,11 +246,16 @@ export default function MyBookings() {
             </div>
             {/* Tutor Info */}
             <div className="flex items-center gap-3 mb-5">
-              <img
-                src={selectedBooking.tutor.user.image || "/default-avatar.png"}
-                alt="Tutor"
-                className="w-14 h-14 rounded-full object-cover border-2 border-gray-200"
-              />
+              <div className="w-14 h-14 relative rounded-full border-2 border-gray-200 overflow-hidden">
+                <Image
+                  src={
+                    selectedBooking.tutor.user.image || "/default-avatar.png"
+                  }
+                  alt="Tutor"
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
+              </div>
               <div className="overflow-hidden">
                 <p className="text-gray-800 font-medium text-lg truncate">
                   {selectedBooking.tutor.user.name}
@@ -325,7 +334,7 @@ export default function MyBookings() {
                 className="w-full border border-gray-200 rounded-xl p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none h-28 shadow-sm"
               />
             </div>
-            z{/* Buttons */}
+            {/* Buttons */}
             <div className="flex justify-end gap-3">
               <button
                 onClick={handleReviewSubmit}

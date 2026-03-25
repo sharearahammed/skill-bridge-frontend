@@ -6,7 +6,6 @@ import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-
 export default function LoginForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -37,6 +36,7 @@ export default function LoginForm() {
         router.push("/");
         router.refresh();
       } catch (err: unknown) {
+        setLoading(false);
         if (err instanceof Error) toast.error(err.message);
         else toast.error("Something went wrong");
       } finally {

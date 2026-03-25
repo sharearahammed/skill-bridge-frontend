@@ -17,6 +17,7 @@ export default function RegisterForm() {
   const [fileName, setFileName] = useState<string>("");
   const [isDragging, setIsDragging] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -27,6 +28,13 @@ export default function RegisterForm() {
       image: undefined as string | undefined,
     },
     onSubmit: async ({ value }) => {
+      setLoading(true);
+      // Required field validation
+      if (!value.name.trim()) return toast.error("Name is required");
+      if (!value.email.trim()) return toast.error("Email is required");
+      if (!value.password.trim()) return toast.error("Password is required");
+      if (!value.role) return toast.error("Role is required");
+
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-up/email`,
@@ -34,6 +42,7 @@ export default function RegisterForm() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(value),
+            credentials: "include",
           },
         );
 
@@ -43,8 +52,10 @@ export default function RegisterForm() {
         toast.success("Registered successfully");
         router.push("/login");
       } catch (err: unknown) {
+        setLoading(false);
         if (err instanceof Error) toast.error(err.message);
         else toast.error("Registration failed");
+        setLoading(false);
       }
     },
   });
@@ -87,6 +98,7 @@ export default function RegisterForm() {
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Full Name"
+              required
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5BA] transition shadow-sm hover:shadow-md"
             />
           )}
@@ -99,6 +111,8 @@ export default function RegisterForm() {
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Email Address"
+              type="email"
+              required
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5BA] transition shadow-sm hover:shadow-md"
             />
           )}
@@ -113,6 +127,7 @@ export default function RegisterForm() {
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Password"
+                required
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5BA] transition shadow-sm hover:shadow-md pr-12"
               />
               <div
@@ -134,6 +149,7 @@ export default function RegisterForm() {
                 onChange={(e) =>
                   field.handleChange(e.target.value as "STUDENT" | "TUTOR")
                 }
+                required
                 className="w-full appearance-none px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5BA] transition shadow-sm hover:shadow-md pr-10 bg-white"
               >
                 <option value="STUDENT">Student</option>
@@ -146,7 +162,7 @@ export default function RegisterForm() {
           )}
         </form.Field>
 
-        {/* File Upload with Drag & Drop */}
+        {/* File Upload with Drag & Drop (Optional) */}
         <form.Field name="image">
           {(field) => (
             <div>
@@ -209,10 +225,10 @@ export default function RegisterForm() {
         {/* Submit */}
         <button
           type="submit"
-          disabled={form.state.isSubmitting}
+          disabled={loading || form.state.isSubmitting}
           className="w-full bg-[#00B5BA] hover:bg-[#00a7aa] text-white py-3 rounded-lg font-semibold transition transform hover:scale-105 cursor-pointer"
         >
-          {form.state.isSubmitting ? "Registering..." : "Register"}
+          {loading || form.state.isSubmitting ? "Registering..." : "Register"}
         </button>
       </form>
 

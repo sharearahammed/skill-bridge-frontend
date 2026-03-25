@@ -122,31 +122,31 @@ export default function AvailabilitySection() {
             <h2 className="text-lg sm:text-xl font-semibold text-gray-700">
               {subjectName} Availability
             </h2>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="datetime-local"
-                value={avail.startTime}
-                onChange={(e) =>
-                  handleAvailabilityChange(subjectId, "startTime", e.target.value)
-                }
-                className="border rounded-lg p-3 flex-1 focus:ring-2 focus:ring-[#00B5BA] outline-none transition w-full sm:w-auto"
-              />
-              <input
-                type="datetime-local"
-                value={avail.endTime}
-                onChange={(e) =>
-                  handleAvailabilityChange(subjectId, "endTime", e.target.value)
-                }
-                className="border rounded-lg p-3 flex-1 focus:ring-2 focus:ring-[#00B5BA] outline-none transition w-full sm:w-auto"
-              />
-              <button
-                onClick={() => handleAddAvailability(subjectId)}
-                disabled={loading}
-                className="px-6 py-3 bg-[#00B5BA] text-white rounded-lg font-medium hover:bg-[#009fa3] transition w-full sm:w-auto"
-              >
-                {loading ? "Adding..." : "Add Availability"}
-              </button>
-            </div>
+           <div className="flex flex-col sm:flex-row gap-4 w-full">
+  <input
+    type="datetime-local"
+    value={avail.startTime}
+    onChange={(e) =>
+      handleAvailabilityChange(subjectId, "startTime", e.target.value)
+    }
+    className="border rounded-lg p-3 flex-1 min-w-0 focus:ring-2 focus:ring-[#00B5BA] outline-none transition w-full sm:w-auto"
+  />
+  <input
+    type="datetime-local"
+    value={avail.endTime}
+    onChange={(e) =>
+      handleAvailabilityChange(subjectId, "endTime", e.target.value)
+    }
+    className="border rounded-lg p-3 flex-1 min-w-0 focus:ring-2 focus:ring-[#00B5BA] outline-none transition w-full sm:w-auto"
+  />
+  <button
+    onClick={() => handleAddAvailability(subjectId)}
+    disabled={loading}
+    className="px-6 py-3 bg-[#00B5BA] text-white rounded-lg font-medium hover:bg-[#009fa3] transition flex-1 sm:flex-none w-full sm:w-auto"
+  >
+    {loading ? "Adding..." : "Add Availability"}
+  </button>
+</div>
           </div>
         );
       })}
