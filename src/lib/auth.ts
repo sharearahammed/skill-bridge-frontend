@@ -12,7 +12,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   try {
     const AUTH_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-    const res = await fetch(`${AUTH_URL}/get-session`, {
+    const res = await fetch(`${AUTH_URL}/api/auth/get-session`, {
       credentials: "include",
       cache: "no-store",
     });

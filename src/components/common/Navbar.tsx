@@ -23,6 +23,8 @@ export interface NavbarProps {
   user?: User | null;
 }
 
+
+
 export default function Navbar({ user }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 

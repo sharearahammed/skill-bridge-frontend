@@ -30,7 +30,8 @@ export default async function RootLayout({
 }>) {
   const { data } = await userService.getSession();
   const user = data?.user;
-  console.log({user});
+  console.log({ user });
+
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className={manrope.className}>
