@@ -2,7 +2,7 @@
 
 export const getTutorById = async (id: string) => {
   try {
-    const res = await fetch(`http://localhost:5000/allTutors/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/allTutors/${id}`, {
       cache: "no-store",
     });
 
@@ -21,7 +21,7 @@ export const getTutorById = async (id: string) => {
 export const bookTutor = async (availabilityId: string) => {
   console.log("availabilityId", availabilityId);
   try {
-    const res = await fetch("http://localhost:5000/booking", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/booking`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ availabilityId }),
