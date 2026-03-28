@@ -11,7 +11,6 @@ export default function TutorSidebar() {
 
   const links = [
     { href: "/dashboard/tutor/availability", label: "Availability Slots" },
-    { href: "/dashboard/tutor/subjects", label: "My Subjects" },
     { href: "/dashboard/tutor/sessions", label: "My Sessions" },
     { href: "/dashboard/tutor/reviews", label: "Reviews" },
   ];

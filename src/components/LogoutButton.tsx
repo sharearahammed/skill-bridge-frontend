@@ -16,11 +16,10 @@ export default function LogoutButton({ user }: LogoutButtonProps) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-out`, {
-      method: "POST",
-      credentials: "include",
-    });
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+
+    document.cookie = "token=; path=/; max-age=0";
 
     router.push("/");
     router.refresh();

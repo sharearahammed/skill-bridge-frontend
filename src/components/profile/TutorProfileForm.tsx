@@ -81,28 +81,28 @@ export default function TutorProfileForm({ user }: TutorProfileFormProps) {
   }, [user.id]);
 
   // Handle file selection & compression
-const handleFile = async (file: File) => {
-  try {
-    const options = {
-      maxSizeMB: 0.5,          // 0.5 MB max
-      maxWidthOrHeight: 800,   // resize to max 800px
-      useWebWorker: true,
-    };
+  const handleFile = async (file: File) => {
+    try {
+      const options = {
+        maxSizeMB: 0.5, // 0.5 MB max
+        maxWidthOrHeight: 800, // resize to max 800px
+        useWebWorker: true,
+      };
 
-    const compressedFile = await imageCompression(file, options);
-    
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setPreview(base64);
-      setImage(base64);
-    };
-    reader.readAsDataURL(compressedFile);
-  } catch (error) {
-    console.error(error);
-    toast.error("Failed to compress image");
-  }
-};
+      const compressedFile = await imageCompression(file, options);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setPreview(base64);
+        setImage(base64);
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to compress image");
+    }
+  };
 
   const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
@@ -135,7 +135,10 @@ const handleFile = async (file: File) => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/tutor/profile`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           body: JSON.stringify({
             name,
             email: user.email,
@@ -144,7 +147,6 @@ const handleFile = async (file: File) => {
             pricePerHour: pricePerHour ? Number(pricePerHour) : null,
             experience: experience ? Number(experience) : null,
           }),
-          credentials: "include",
         },
       );
 

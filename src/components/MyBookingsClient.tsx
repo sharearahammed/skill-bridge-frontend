@@ -145,11 +145,16 @@ export default function MyBookings() {
       toast.error("Failed to attend session");
     }
   };
+  console.log("bookings", bookings);
+
+  if (!bookings || bookings.length === 0) {
+    return <div className="text-center">No bookings found</div>;
+  }
 
   return (
     <div className="space-y-6">
       {/* Bookings List */}
-      {bookings.map((booking) => (
+      {bookings?.map((booking) => (
         <div
           key={booking.id}
           className="flex items-center justify-between p-4 border border-gray-200 rounded-xl shadow-md hover:shadow-lg transition duration-200 bg-white"

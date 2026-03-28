@@ -19,7 +19,9 @@ export default function AvailabilitySection() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/category`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/category`,
+        );
         const data = await res.json();
         setSubjects(data.data || []);
       } catch {
@@ -31,14 +33,14 @@ export default function AvailabilitySection() {
 
   const toggleSubject = (id: string) => {
     setSelectedSubjects((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id],
     );
   };
 
   const handleAvailabilityChange = (
     subjectId: string,
     field: "startTime" | "endTime",
-    value: string
+    value: string,
   ) => {
     setAvailability((prev) => ({
       ...prev,
@@ -53,26 +55,37 @@ export default function AvailabilitySection() {
 
     setLoading(true);
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tutorSubject/subjects`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ categoryIds: [subjectId] }),
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/tutorSubject/subjects`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ categoryIds: [subjectId] }),
+        },
+      );
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tutor/availability`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          subjectId,
-          startTime: avail.startTime,
-          endTime: avail.endTime,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/tutor/availability`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            subjectId,
+            startTime: avail.startTime,
+            endTime: avail.endTime,
+          }),
+        },
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to add availability");
+      if (!res.ok)
+        throw new Error(data.message || "Failed to add availability");
 
       toast.success("Subject & Availability added!");
     } catch (err: unknown) {
@@ -112,8 +125,9 @@ export default function AvailabilitySection() {
       {/* Availability Section */}
       {selectedSubjects.map((subjectId) => {
         const avail = availability[subjectId] || { startTime: "", endTime: "" };
-        const subjectName = subjects.find((s) => s.id === subjectId)?.name || "Subject";
-
+        const subjectName =
+          subjects.find((s) => s.id === subjectId)?.name || "Subject";
+        const now = new Date().toISOString().slice(0, 16);
         return (
           <div
             key={subjectId}
@@ -122,31 +136,38 @@ export default function AvailabilitySection() {
             <h2 className="text-lg sm:text-xl font-semibold text-gray-700">
               {subjectName} Availability
             </h2>
-           <div className="flex flex-col sm:flex-row gap-4 w-full">
-  <input
-    type="datetime-local"
-    value={avail.startTime}
-    onChange={(e) =>
-      handleAvailabilityChange(subjectId, "startTime", e.target.value)
-    }
-    className="border rounded-lg p-3 flex-1 min-w-0 focus:ring-2 focus:ring-[#00B5BA] outline-none transition w-full sm:w-auto"
-  />
-  <input
-    type="datetime-local"
-    value={avail.endTime}
-    onChange={(e) =>
-      handleAvailabilityChange(subjectId, "endTime", e.target.value)
-    }
-    className="border rounded-lg p-3 flex-1 min-w-0 focus:ring-2 focus:ring-[#00B5BA] outline-none transition w-full sm:w-auto"
-  />
-  <button
-    onClick={() => handleAddAvailability(subjectId)}
-    disabled={loading}
-    className="px-6 py-3 bg-[#00B5BA] text-white rounded-lg font-medium hover:bg-[#009fa3] transition flex-1 sm:flex-none w-full sm:w-auto"
-  >
-    {loading ? "Adding..." : "Add Availability"}
-  </button>
-</div>
+            <div className="flex flex-col sm:flex-row gap-4 w-full">
+              <input
+                type="datetime-local"
+                value={avail.startTime}
+                min={now} // ✅ prevent past date
+                onChange={(e) =>
+                  handleAvailabilityChange(
+                    subjectId,
+                    "startTime",
+                    e.target.value,
+                  )
+                }
+                className="border rounded-lg p-3 flex-1 min-w-0 focus:ring-2 focus:ring-[#00B5BA] outline-none transition w-full sm:w-auto"
+              />
+
+              <input
+                type="datetime-local"
+                value={avail.endTime}
+                min={now} // ✅ prevent past date
+                onChange={(e) =>
+                  handleAvailabilityChange(subjectId, "endTime", e.target.value)
+                }
+                className="border rounded-lg p-3 flex-1 min-w-0 focus:ring-2 focus:ring-[#00B5BA] outline-none transition w-full sm:w-auto"
+              />
+              <button
+                onClick={() => handleAddAvailability(subjectId)}
+                disabled={loading}
+                className="px-6 py-3 bg-[#00B5BA] text-white rounded-lg font-medium hover:bg-[#009fa3] transition flex-1 sm:flex-none w-full sm:w-auto"
+              >
+                {loading ? "Adding..." : "Add Availability"}
+              </button>
+            </div>
           </div>
         );
       })}

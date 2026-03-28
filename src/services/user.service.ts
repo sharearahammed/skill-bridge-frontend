@@ -24,7 +24,7 @@ export const userService = {
       if (!res.ok || !session.success) {
         return { data: null, error: { message: "Session is missing." } };
       }
-
+      console.log({ session });
       return { data: session.data, error: null };
     } catch (err) {
       console.error(err);
