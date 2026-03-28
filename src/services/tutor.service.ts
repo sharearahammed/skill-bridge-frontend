@@ -23,7 +23,10 @@ export const bookTutor = async (availabilityId: string) => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/booking`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       body: JSON.stringify({ availabilityId }),
     });
 

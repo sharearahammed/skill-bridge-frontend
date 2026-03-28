@@ -70,32 +70,34 @@ export default function BookingForm({
     else toast("Booking cancelled");
   };
 
-  const confirmBooking = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ availabilityId }),
-          credentials: "include",
+const confirmBooking = async () => {
+  setLoading(true);
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      );
+        body: JSON.stringify({ availabilityId }),
+      },
+    );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Booking failed");
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Booking failed");
 
-      toast.success("Booking successful!");
-      router.push("/dashboard/student/my-booking");
-      setAvailabilityId("");
-    } catch (error: unknown) {
-      if (error instanceof Error) toast.error(error.message);
-      else toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+    toast.success("Booking successful!");
+    router.push("/dashboard/student/my-booking");
+    setAvailabilityId("");
+  } catch (error: unknown) {
+    if (error instanceof Error) toast.error(error.message);
+    else toast.error("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const formatTime = (start: string, end: string) => {
     const startDate = new Date(start);

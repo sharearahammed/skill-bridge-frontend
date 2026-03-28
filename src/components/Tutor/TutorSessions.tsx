@@ -21,50 +21,56 @@ export default function TutorSessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchSessions = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/tutor/sessions`,
-        { credentials: "include" },
-      );
+const fetchSessions = async () => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/tutor/sessions`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      },
+    );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      setSessions(data.data);
-    } catch (error: unknown) {
-      if (error instanceof Error) toast.error(error.message);
-      else toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    setSessions(data.data);
+  } catch (error: unknown) {
+    if (error instanceof Error) toast.error(error.message);
+    else toast.error("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchSessions();
   }, []);
 
-  const updateStatus = async (bookingId: string, status: string) => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/status`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ bookingId, status }),
+const updateStatus = async (bookingId: string, status: string) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/status`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      );
+        body: JSON.stringify({ bookingId, status }),
+      },
+    );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
 
-      toast.success("Status updated");
-      fetchSessions();
-    } catch (error: unknown) {
-      if (error instanceof Error) toast.error(error.message);
-      else toast.error("Something went wrong");
-    }
-  };
+    toast.success("Status updated");
+    fetchSessions();
+  } catch (error: unknown) {
+    if (error instanceof Error) toast.error(error.message);
+    else toast.error("Something went wrong");
+  }
+};
 
   const handleStatusChange = async (bookingId: string, status: string) => {
     let confirmText = "";

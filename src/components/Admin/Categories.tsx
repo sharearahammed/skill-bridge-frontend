@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import Swal from "sweetalert2";
 
 type Category = { id: string; name: string };
 
@@ -12,7 +13,9 @@ export default function CategoriesPage() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/categories`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/categories`,
+      );
       const data = await res.json();
       if (res.ok) setCategories(data.data);
     } catch (err) {
@@ -24,12 +27,17 @@ export default function CategoriesPage() {
     if (!name) return toast.error("Category name required");
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/category`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ name }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/category`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ name }),
+        },
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       toast.success("Category created");
@@ -40,6 +48,39 @@ export default function CategoriesPage() {
       else toast.error("Something went wrong");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteCategory = async (id: string) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This category will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "No, cancel",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/category/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      toast.success("Category deleted");
+      fetchCategories();
+    } catch (err: unknown) {
+      if (err instanceof Error) toast.error(err.message);
+      else toast.error("Something went wrong");
     }
   };
 
@@ -71,14 +112,22 @@ export default function CategoriesPage() {
 
       <div className="grid sm:grid-cols-2 gap-4">
         {categories.length === 0 && (
-          <p className="text-gray-500 col-span-2 text-center">No categories found</p>
+          <p className="text-gray-500 col-span-2 text-center">
+            No categories found
+          </p>
         )}
         {categories.map((c) => (
           <div
             key={c.id}
-            className="p-4 bg-[#f1f5f9] rounded-xl shadow hover:shadow-md transition cursor-pointer"
+            className="p-4 bg-[#f1f5f9] rounded-xl shadow hover:shadow-md transition flex items-center justify-between"
           >
             <p className="text-gray-800 font-medium">{c.name}</p>
+            <button
+              onClick={() => deleteCategory(c.id)}
+              className="cursor-pointer text-gray-400 hover:text-red-500 transition text-lg font-bold"
+            >
+              ✕
+            </button>
           </div>
         ))}
       </div>

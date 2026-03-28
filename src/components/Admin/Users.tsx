@@ -23,9 +23,14 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users`, {
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       setUsers(data.data);
@@ -44,10 +49,12 @@ export default function UsersPage() {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/user/${id}/status`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           body: JSON.stringify({ status: newStatus }),
-        }
+        },
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
@@ -59,7 +66,10 @@ export default function UsersPage() {
     }
   };
 
-  const handleStatusClick = async (id: string, current: "ACTIVE" | "BANNED") => {
+  const handleStatusClick = async (
+    id: string,
+    current: "ACTIVE" | "BANNED",
+  ) => {
     const actionText = current === "ACTIVE" ? "ban" : "activate";
     const result = await Swal.fire({
       title: `Are you sure you want to ${actionText} this user?`,
@@ -106,7 +116,10 @@ export default function UsersPage() {
           <tbody>
             {users.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-gray-500 font-medium">
+                <td
+                  colSpan={6}
+                  className="p-6 text-center text-gray-500 font-medium"
+                >
                   No users found
                 </td>
               </tr>

@@ -12,10 +12,8 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 pt-12 sm:pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         {/* Top Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-12">
-
           {/* Brand */}
           <div className="text-center sm:text-left">
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">
@@ -23,8 +21,8 @@ export default function Footer() {
             </h2>
 
             <p className="text-sm leading-relaxed max-w-sm mx-auto sm:mx-0">
-              Connecting students with expert tutors worldwide.
-              Learn smarter, grow faster, and achieve your goals.
+              Connecting students with expert tutors worldwide. Learn smarter,
+              grow faster, and achieve your goals.
             </p>
 
             {/* Social Icons */}
@@ -99,39 +97,27 @@ export default function Footer() {
 
             <ul className="space-y-3 text-sm">
               <li>
-                <Link
-                  href="/tutors?category=Programming"
-                  className="hover:text-[#00B5BA] transition-colors"
-                >
+                <p className="hover:text-[#00B5BA] transition-colors">
                   Programming
-                </Link>
+                </p>
               </li>
 
               <li>
-                <Link
-                  href="/tutors?category=Mathematics"
-                  className="hover:text-[#00B5BA] transition-colors"
-                >
+                <p className="hover:text-[#00B5BA] transition-colors">
                   Mathematics
-                </Link>
+                </p>
               </li>
 
               <li>
-                <Link
-                  href="/tutors?category=English"
-                  className="hover:text-[#00B5BA] transition-colors"
-                >
+                <p className="hover:text-[#00B5BA] transition-colors">
                   English
-                </Link>
+                </p>
               </li>
 
               <li>
-                <Link
-                  href="/tutors?category=Science"
-                  className="hover:text-[#00B5BA] transition-colors"
-                >
+                <p className="hover:text-[#00B5BA] transition-colors">
                   Science
-                </Link>
+                </p>
               </li>
             </ul>
           </div>
@@ -178,18 +164,14 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
         </div>
 
         {/* Bottom */}
         <div className="border-t border-gray-700 pt-6 text-center text-xs sm:text-sm text-gray-500">
           © {new Date().getFullYear()}{" "}
-          <span className="text-[#00B5BA] font-medium">
-            SkillBridge
-          </span>{" "}
-          . All rights reserved.
+          <span className="text-[#00B5BA] font-medium">SkillBridge</span> . All
+          rights reserved.
         </div>
-
       </div>
     </footer>
   );

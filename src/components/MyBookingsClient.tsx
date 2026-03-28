@@ -45,7 +45,11 @@ export default function MyBookings() {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/my-booking`,
-        { credentials: "include" },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
       );
       const data = await res.json();
       setBookings(data.data || []);
@@ -98,9 +102,11 @@ export default function MyBookings() {
     try {
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: JSON.stringify(body),
-        credentials: "include",
       });
       const data = await res.json();
       if (data.success) {
@@ -130,7 +136,9 @@ export default function MyBookings() {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/attend/${bookingId}`,
         {
           method: "PATCH",
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
       );
       const data = await res.json();

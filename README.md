@@ -1,36 +1,235 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Skill Bridge Frontend
+
+Skill Bridge is a Tutor Booking Platform frontend built with Next.js, TypeScript, and Tailwind CSS.
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js 16
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **UI Components:** Shadcn UI, Radix UI
+- **State Management:** Zustand
+- **Form Handling:** TanStack React Form
+- **Validation:** Zod
+- **Notifications:** Sonner, SweetAlert2
+- **Icons:** Lucide React, React Icons
+- **HTTP:** Native Fetch API
+
+---
+
+## Project Structure
+
+```
+skill-bridge-frontend/
+├── src/
+│   ├── app/
+│   │   ├── (commonLayout)/       # Shared layout pages
+│   │   ├── dashboard/            # Dashboard pages
+│   │   ├── profile/              # Profile pages
+│   │   ├── public/               # Public pages
+│   │   ├── tutors/
+│   │   │   ├── [id]/             # Single tutor page
+│   │   │   └── all/              # All tutors page
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── globals.css
+│   │   └── not-found.tsx
+│   ├── components/
+│   │   ├── Admin/
+│   │   │   ├── AdminSidebar.tsx
+│   │   │   ├── Bookings.tsx
+│   │   │   ├── Categories.tsx
+│   │   │   └── Users.tsx
+│   │   ├── authentication/
+│   │   │   ├── login-form.tsx
+│   │   │   └── register-form.tsx
+│   │   ├── common/
+│   │   │   ├── AboutUsPage.tsx
+│   │   │   ├── Banner.tsx
+│   │   │   ├── ContactPage.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── GetAccessToday.tsx
+│   │   │   ├── HowItWorks.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── PrivacyPolicyPage.tsx
+│   │   │   ├── TermsPage.tsx
+│   │   │   └── UnlockPotential.tsx
+│   │   ├── profile/
+│   │   ├── Tutor/
+│   │   │   ├── AllTutorsPage.tsx
+│   │   │   ├── AvailabilitySection.tsx
+│   │   │   ├── TutorCard.tsx
+│   │   │   ├── TutorReviewsPage.tsx
+│   │   │   ├── TutorSessions.tsx
+│   │   │   └── TutorSidebar.tsx
+│   │   ├── BookingForm.tsx
+│   │   ├── CategoriesSection.tsx
+│   │   ├── LogoutButton.tsx
+│   │   ├── MyBookingsClient.tsx
+│   │   ├── PrivateRoute.tsx
+│   │   ├── ProtectedRoute.tsx
+│   │   └── StudentSidebar.tsx
+│   ├── lib/
+│   ├── services/
+│   │   ├── tutor.service.ts      # Tutor related API calls
+│   │   └── user.service.ts       # User session management
+│   ├── store/                    # Zustand store
+│   ├── types/                    # TypeScript types
+│   └── assets/
+├── .env.local
+├── .gitignore
+├── next.config.ts
+├── tailwind.config.ts
+├── tsconfig.json
+└── package.json
+```
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the repository
+
+```bash
+git clone <repo-url>
+cd skill-bridge-frontend
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Create `.env.local` file
+
+```env
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
+```
+
+### 4. Start the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App will run at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Authentication
 
-## Learn More
+JWT token is used for authentication.
 
-To learn more about Next.js, take a look at the following resources:
+### Token Storage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+When a user logs in, the token is saved in two places:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```typescript
+// For client-side usage
+localStorage.setItem("token", data.data.token);
 
-## Deploy on Vercel
+// For server-side (Next.js Server Components)
+document.cookie = `token=${data.data.token}; path=/; max-age=${7 * 24 * 60 * 60}`;
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Logout
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Both storages are cleared on logout:
+
+```typescript
+localStorage.removeItem("token");
+document.cookie = "token=; path=/; max-age=0";
+```
+
+### Making Protected API Calls
+
+```typescript
+const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/some-endpoint`, {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+});
+```
+
+### Getting Session in Server Components
+
+```typescript
+import { userService } from "@/services/user.service";
+
+const { data, error } = await userService.getSession();
+const user = data; // { id, name, email, role, status, image, phone }
+```
+
+---
+
+## User Roles
+
+| Role | Dashboard | Description |
+|------|-----------|-------------|
+| `STUDENT` | `/dashboard/student` | Can book tutors and submit reviews |
+| `TUTOR` | `/dashboard/tutor` | Can manage profile, availability, and sessions |
+| `ADMIN` | `/dashboard/admin` | Can manage users, bookings, and categories |
+
+---
+
+## Pages
+
+### Public Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Home page |
+| `/tutors/all` | Browse all tutors |
+| `/tutors/[id]` | Single tutor profile |
+| `/login` | Login page |
+| `/register` | Register page |
+
+### Student Dashboard
+
+| Route | Description |
+|-------|-------------|
+| `/dashboard/student` | Student home |
+| `/dashboard/student/my-booking` | My bookings |
+
+### Tutor Dashboard
+
+| Route | Description |
+|-------|-------------|
+| `/dashboard/tutor` | Tutor home |
+| `/dashboard/tutor/sessions` | Sessions |
+| `/dashboard/tutor/availability` | Manage availability |
+
+### Admin Dashboard
+
+| Route | Description |
+|-------|-------------|
+| `/dashboard/admin` | Admin home |
+| `/dashboard/admin/users` | Manage all users |
+| `/dashboard/admin/bookings` | View all bookings |
+| `/dashboard/admin/categories` | Manage categories |
+
+---
+
+## Key Components
+
+| Component | Description |
+|-----------|-------------|
+| `PrivateRoute.tsx` | Redirects to login if not authenticated |
+| `ProtectedRoute.tsx` | Checks user role, blocks unauthorized access |
+| `LogoutButton.tsx` | Clears token and logs the user out |
+| `userService` | Fetches current user info using cookie (server-side) |
+| `tutorService` | Handles tutor related API calls |
+
+---
+
+## Available Scripts
+
+```bash
+npm run dev      # Start development server (port 3000)
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
