@@ -13,6 +13,7 @@ export const userService = {
           Cookie: cookieStore.toString(),
         },
         cache: "no-store",
+        credentials: "include",
       });
 
       const session = await res.json();
