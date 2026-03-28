@@ -8,7 +8,7 @@ export default async function StudentDashboardLayout({
   children: React.ReactNode;
 }) {
   const { data } = await userService.getSession();
-  const user = data?.user;
+  const user = data;
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Sidebar */}

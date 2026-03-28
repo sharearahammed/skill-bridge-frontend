@@ -23,7 +23,7 @@ export default async function TutorProfilePage({ params }: PageProps) {
 
   // Server-side session fetch
   const { data } = await userService.getSession();
-  const user = data?.user;
+  const user = data;
 
   const response = await getTutorById(id);
   const tutor = response.data;

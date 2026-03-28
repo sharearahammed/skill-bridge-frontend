@@ -11,39 +11,43 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-    onSubmit: async ({ value }) => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-in/email`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify(value),
-          },
-        );
+const form = useForm({
+  defaultValues: {
+    email: "",
+    password: "",
+  },
+  onSubmit: async ({ value }) => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(value),
+        },
+      );
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Login failed");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
-        toast.success("Logged in successfully!");
-        router.push("/");
-        router.refresh();
-      } catch (err: unknown) {
-        setLoading(false);
-        if (err instanceof Error) toast.error(err.message);
-        else toast.error("Something went wrong");
-      } finally {
-        setLoading(false);
-      }
-    },
-  });
+      // token localStorage এ save করো
+      localStorage.setItem("token", data.data.token);
+
+      // token cookie তেও save করো (server-side এর জন্য)
+      document.cookie = `token=${data.data.token}; path=/; max-age=${7 * 24 * 60 * 60}`;
+
+      toast.success("Logged in successfully!");
+      router.push("/");
+      router.refresh();
+    } catch (err: unknown) {
+      if (err instanceof Error) toast.error(err.message);
+      else toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  },
+});
 
   return (
     <div className="flex justify-center items-center min-h-screen">

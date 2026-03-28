@@ -10,7 +10,7 @@ export default async function TutorDashboardLayout({
 }) {
   
   const { data } = await userService.getSession();
-  const user = data?.user;
+  const user = data;
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       <AdminSidebar />

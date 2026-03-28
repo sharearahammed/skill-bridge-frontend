@@ -5,7 +5,7 @@ import { userService } from "@/src/services/user.service";
 export const dynamic = "force-dynamic";
 export default async function ProfilePage() {
   const { data } = await userService.getSession();
-  const user = data?.user;
+  const user = data;
 
   if (!user) return <p className="text-center mt-20">Loading...</p>;
 

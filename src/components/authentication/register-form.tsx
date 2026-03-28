@@ -19,46 +19,45 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const form = useForm({
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      role: "STUDENT",
-      image: undefined as string | undefined,
-    },
-    onSubmit: async ({ value }) => {
-      setLoading(true);
-      // Required field validation
-      if (!value.name.trim()) return toast.error("Name is required");
-      if (!value.email.trim()) return toast.error("Email is required");
-      if (!value.password.trim()) return toast.error("Password is required");
-      if (!value.role) return toast.error("Role is required");
+const form = useForm({
+  defaultValues: {
+    name: "",
+    email: "",
+    password: "",
+    role: "STUDENT",
+    image: undefined as string | undefined,
+  },
+  onSubmit: async ({ value }) => {
+    setLoading(true);
+    // Required field validation
+    if (!value.name.trim()) return toast.error("Name is required");
+    if (!value.email.trim()) return toast.error("Email is required");
+    if (!value.password.trim()) return toast.error("Password is required");
+    if (!value.role) return toast.error("Role is required");
 
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-up/email`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(value),
-            credentials: "include",
-          },
-        );
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(value),
+        },
+      );
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Registration failed");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Registration failed");
 
-        toast.success("Registered successfully");
-        router.push("/login");
-      } catch (err: unknown) {
-        setLoading(false);
-        if (err instanceof Error) toast.error(err.message);
-        else toast.error("Registration failed");
-        setLoading(false);
-      }
-    },
-  });
+      toast.success("Registered successfully");
+      router.push("/login");
+    } catch (err: unknown) {
+      if (err instanceof Error) toast.error(err.message);
+      else toast.error("Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  },
+});
 
   const handleDrop = (e: DragEvent<HTMLLabelElement>, field: ImageField) => {
     e.preventDefault();

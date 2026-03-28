@@ -29,7 +29,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { data } = await userService.getSession();
-  const user = data?.user;
+  const user = data;
   console.log({ user });
 
   return (
