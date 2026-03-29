@@ -154,6 +154,7 @@ export default function RegisterForm() {
               >
                 <option value="STUDENT">Student</option>
                 <option value="TUTOR">Tutor</option>
+                {/* ADMIN role is seeded — not available for public registration */}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 select-none">
                 ▼

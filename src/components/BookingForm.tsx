@@ -57,12 +57,15 @@ export default function BookingForm({
 
     // 3️⃣ Confirmation popup
     const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to book this slot?",
+      title: "Confirm Booking",
+      html: `
+        <p class="text-gray-600 mb-2">Do you want to book this slot?</p>
+        <p class="text-sm text-gray-500">💵 Payment method: <strong>Cash on Delivery</strong></p>
+      `,
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
+      confirmButtonText: "Yes, Book Now",
+      cancelButtonText: "Cancel",
       reverseButtons: true,
     });
 
