@@ -59,7 +59,7 @@ export default function LogoutButton({ user }: LogoutButtonProps) {
 
       {/* Dropdown Menu */}
       <div
-        className={`absolute right-0 mt-2 w-44 bg-white text-black shadow-lg rounded-md z-50 origin-top-right transform transition-all duration-200 ${
+        className={`absolute md:right-0 xs:left-0 mt-2 w-44 bg-white text-black shadow-lg rounded-md z-50 origin-top-right transform transition-all duration-200 ${
           open
             ? "opacity-100 scale-100 visible"
             : "opacity-0 scale-95 invisible"

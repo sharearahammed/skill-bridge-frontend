@@ -42,13 +42,13 @@ export default async function TutorProfilePage({ params }: PageProps) {
     <div className="max-w-6xl mx-auto px-6 py-12">
       <div className="bg-white rounded-2xl shadow-lg p-8">
         {/* Top Section */}
-        <div className="flex items-center gap-6 mb-8">
-          <div className="relative w-28 h-28">
+        <div className="flex items-center gap-6 mb-8 flex-col sm:flex-row">
+          <div className="relative w-28 h-28 flex-shrink-0">
             <Image
-              src={tutor?.user.image || defaultImage}
-              alt={tutor?.user.name}
+              src={tutor.user.image || defaultImage}
+              alt={tutor.user.name}
               fill
-              className="rounded-full object-cover ring-4 ring-[#00B5BA]/20"
+              className="rounded-full object-cover ring-2 ring-[#00B5BA]/30"
             />
           </div>
 

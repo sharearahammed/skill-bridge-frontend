@@ -21,8 +21,8 @@ type Booking = {
     pricePerHour?: number;
     reviews?: Review[];
   };
-  studentId: string; // needed for review API
-  tutorId: string; // needed for review API
+  studentId: string;
+  tutorId: string;
   availability?: { subjectId: string };
 };
 
@@ -40,11 +40,13 @@ export default function MyBookings() {
   const [reviewRating, setReviewRating] = useState(3);
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchBookings = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/my-booking`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/my-booking?page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -52,7 +54,8 @@ export default function MyBookings() {
         },
       );
       const data = await res.json();
-      setBookings(data.data || []);
+      setBookings(data.data.bookings || []);
+      setTotalPages(data.data.totalPages);
     } catch (err) {
       console.error("Failed to fetch bookings:", err);
       toast.error("Failed to fetch bookings");
@@ -61,9 +64,8 @@ export default function MyBookings() {
 
   useEffect(() => {
     fetchBookings();
-  }, []);
+  }, [page]);
 
-  // Review Handlers
   const startEditReview = (review: Review, booking: Booking) => {
     setReviewText(review.comment || "");
     setReviewRating(review.rating);
@@ -129,7 +131,6 @@ export default function MyBookings() {
     }
   };
 
-  // Attend Session Handler
   const handleAttendSession = async (bookingId: string) => {
     try {
       const res = await fetch(
@@ -160,16 +161,16 @@ export default function MyBookings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-2 sm:px-0">
       {/* Bookings List */}
       {bookings?.map((booking) => (
         <div
           key={booking.id}
-          className="flex items-center justify-between p-4 border border-gray-200 rounded-xl shadow-md hover:shadow-lg transition duration-200 bg-white"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border border-gray-200 rounded-xl shadow-md hover:shadow-lg transition duration-200 bg-white"
         >
           {/* Tutor Info */}
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 relative rounded-full border-2 border-gray-100 overflow-hidden">
+            <div className="w-14 h-14 relative rounded-full border-2 border-gray-100 overflow-hidden shrink-0">
               <Image
                 src={booking.tutor.user.image || "/default-avatar.png"}
                 alt="Tutor"
@@ -193,12 +194,12 @@ export default function MyBookings() {
           </div>
 
           {/* Booking Info */}
-          <div className="text-right space-y-2 flex flex-col justify-between gap-2">
+          <div className="flex flex-col sm:items-end gap-2">
             <p className="text-gray-600 text-sm">
               {new Date(booking.startTime).toLocaleString()} -{" "}
               {new Date(booking.endTime).toLocaleTimeString()}
             </p>
-            <div className="flex justify-end items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold ${
                   booking.status === "COMPLETED"
@@ -231,9 +232,7 @@ export default function MyBookings() {
                   }
                   className="px-4 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition text-sm"
                 >
-                  {booking.tutor.reviews?.length
-                    ? "Edit Review"
-                    : "Leave Review"}
+                  {booking.tutor.reviews?.length ? "Edit Review" : "Leave Review"}
                 </button>
               )}
             </div>
@@ -241,13 +240,36 @@ export default function MyBookings() {
         </div>
       ))}
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-3 mt-6">
+          <button
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+            className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-40 transition"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+            className="px-4 py-2 rounded-lg bg-[#00B5BA] text-white hover:opacity-90 disabled:opacity-40 transition"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {/* Modal */}
       {isModalOpen && selectedBooking && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 relative animate-fadeIn">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-5 sm:p-6 relative animate-fadeIn">
             {/* Header */}
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-2xl font-semibold text-gray-800">
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800">
                 {editingReviewId ? "Edit Review" : "Leave Review"}
               </h3>
               <button
@@ -259,18 +281,16 @@ export default function MyBookings() {
             </div>
             {/* Tutor Info */}
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-14 h-14 relative rounded-full border-2 border-gray-200 overflow-hidden">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 relative rounded-full border-2 border-gray-200 overflow-hidden shrink-0">
                 <Image
-                  src={
-                    selectedBooking.tutor.user.image || "/default-avatar.png"
-                  }
+                  src={selectedBooking.tutor.user.image || "/default-avatar.png"}
                   alt="Tutor"
                   fill
                   style={{ objectFit: "cover" }}
                 />
               </div>
               <div className="overflow-hidden">
-                <p className="text-gray-800 font-medium text-lg truncate">
+                <p className="text-gray-800 font-medium text-base sm:text-lg truncate">
                   {selectedBooking.tutor.user.name}
                 </p>
                 {selectedBooking.tutor.bio && (
@@ -280,7 +300,7 @@ export default function MyBookings() {
                 )}
               </div>
             </div>
-            {/* Half-Star Rating */}
+            {/* Rating */}
             <div className="mb-5">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Rating
@@ -291,7 +311,6 @@ export default function MyBookings() {
                   const halfStarValue = starValue - 0.5;
                   return (
                     <div key={starValue} className="relative">
-                      {/* Full star */}
                       <input
                         type="radio"
                         name="rating"
@@ -310,8 +329,6 @@ export default function MyBookings() {
                       >
                         ★
                       </label>
-
-                      {/* Half star overlay */}
                       <input
                         type="radio"
                         name="rating"
@@ -348,16 +365,16 @@ export default function MyBookings() {
               />
             </div>
             {/* Buttons */}
-            <div className="flex justify-end gap-3">
+            <div className="flex flex-col sm:flex-row justify-end gap-3">
               <button
                 onClick={handleReviewSubmit}
-                className="px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md transition font-medium"
+                className="w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md transition font-medium"
               >
                 {editingReviewId ? "Update Review" : "Submit Review"}
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-5 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 shadow-md transition font-medium"
+                className="w-full sm:w-auto px-5 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 shadow-md transition font-medium"
               >
                 Cancel
               </button>

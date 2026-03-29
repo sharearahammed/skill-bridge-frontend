@@ -28,11 +28,12 @@ export default function TutorReviewsPage({ user }: TutorReviewsPageProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const tutorId = user.id;
 
-  // Click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -69,7 +70,7 @@ export default function TutorReviewsPage({ user }: TutorReviewsPageProps) {
     try {
       setLoading(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/review/tutor/${tutorId}/${categoryId}/reviews`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/review/tutor/${tutorId}/${categoryId}/reviews?page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -78,7 +79,8 @@ export default function TutorReviewsPage({ user }: TutorReviewsPageProps) {
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      setReviews(data.data);
+      setReviews(data.data.reviews);
+      setTotalPages(data.data.totalPages);
     } catch (err: unknown) {
       if (err instanceof Error) toast.error(err.message);
       else toast.error("Something went wrong");
@@ -90,9 +92,17 @@ export default function TutorReviewsPage({ user }: TutorReviewsPageProps) {
   useEffect(() => {
     fetchSubjects();
   }, []);
+
   useEffect(() => {
     if (selectedSubject) fetchReviews(selectedSubject.id);
-  }, [selectedSubject]);
+  }, [selectedSubject, page]);
+
+  // Subject change এ page reset
+  const handleSubjectChange = (subject: Subject) => {
+    setSelectedSubject(subject);
+    setPage(1);
+    setDropdownOpen(false);
+  };
 
   const renderStars = (rating: number) => (
     <div className="flex gap-1">
@@ -140,10 +150,7 @@ export default function TutorReviewsPage({ user }: TutorReviewsPageProps) {
             {subjects.map((s) => (
               <li
                 key={s.id}
-                onClick={() => {
-                  setSelectedSubject(s);
-                  setDropdownOpen(false);
-                }}
+                onClick={() => handleSubjectChange(s)}
                 className={`px-4 py-2 cursor-pointer hover:bg-[#00B5BA] hover:text-white transition ${
                   selectedSubject?.id === s.id
                     ? "bg-[#00B5BA] text-white font-semibold"
@@ -164,54 +171,79 @@ export default function TutorReviewsPage({ user }: TutorReviewsPageProps) {
       ) : reviews.length === 0 ? (
         <p className="text-center text-gray-500 mt-6">No reviews yet</p>
       ) : (
-        <div className="grid gap-6 mt-4">
-          {reviews.map((review) => (
-            <div
-              key={review.id}
-              className="flex flex-col md:flex-row justify-between gap-4 p-6 bg-gradient-to-br from-white via-gray-50 to-white rounded-3xl shadow-lg hover:shadow-2xl transition-all"
-            >
-              <div className="flex gap-4 items-start">
-                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#00B5BA] flex-shrink-0">
-                  {review.student.image ? (
-                    <Image
-                      src={review.student.image}
-                      alt={review.student.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[#00B5BA] text-white font-bold text-xl">
-                      {review.student.name[0]}
-                    </div>
-                  )}
+        <>
+          <div className="grid gap-6 mt-4">
+            {reviews.map((review) => (
+              <div
+                key={review.id}
+                className="flex flex-col md:flex-row justify-between gap-4 p-6 bg-gradient-to-br from-white via-gray-50 to-white rounded-3xl shadow-lg hover:shadow-2xl transition-all"
+              >
+                <div className="flex gap-4 items-start">
+                  <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#00B5BA] flex-shrink-0">
+                    {review.student.image ? (
+                      <Image
+                        src={review.student.image}
+                        alt={review.student.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-[#00B5BA] text-white font-bold text-xl">
+                        {review.student.name[0]}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <h3 className="font-semibold text-lg text-gray-800">
+                      {review.student.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {review.student.email}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">{review.comment}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {new Date(review.createdAt).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <h3 className="font-semibold text-lg text-gray-800">
-                    {review.student.name}
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    {review.student.email}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">{review.comment}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {new Date(review.createdAt).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
 
-              <div className="text-right flex flex-col justify-center items-end gap-2">
-                {renderStars(review.rating)}
-                <p className="text-sm font-medium text-gray-700">
-                  {review.rating}/5
-                </p>
+                <div className="text-right flex flex-col justify-center items-end gap-2">
+                  {renderStars(review.rating)}
+                  <p className="text-sm font-medium text-gray-700">
+                    {review.rating}/5
+                  </p>
+                </div>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-3 mt-6">
+              <button
+                onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                disabled={page === 1}
+                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-40 transition"
+              >
+                Previous
+              </button>
+              <span className="text-sm text-gray-600">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                disabled={page === totalPages}
+                className="px-4 py-2 rounded-lg bg-[#00B5BA] text-white hover:opacity-90 disabled:opacity-40 transition"
+              >
+                Next
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );

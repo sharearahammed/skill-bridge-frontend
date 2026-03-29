@@ -20,57 +20,60 @@ type Session = {
 export default function TutorSessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-const fetchSessions = async () => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/tutor/sessions`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+  const fetchSessions = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/tutor/sessions?page=${page}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
-      },
-    );
+      );
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-    setSessions(data.data);
-  } catch (error: unknown) {
-    if (error instanceof Error) toast.error(error.message);
-    else toast.error("Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      setSessions(data.data.sessions || []);
+      setTotalPages(data.data.totalPages);
+    } catch (error: unknown) {
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchSessions();
-  }, []);
+  }, [page]);
 
-const updateStatus = async (bookingId: string, status: string) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/status`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+  const updateStatus = async (bookingId: string, status: string) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ bookingId, status }),
         },
-        body: JSON.stringify({ bookingId, status }),
-      },
-    );
+      );
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
 
-    toast.success("Status updated");
-    fetchSessions();
-  } catch (error: unknown) {
-    if (error instanceof Error) toast.error(error.message);
-    else toast.error("Something went wrong");
-  }
-};
+      toast.success("Status updated");
+      fetchSessions();
+    } catch (error: unknown) {
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("Something went wrong");
+    }
+  };
 
   const handleStatusChange = async (bookingId: string, status: string) => {
     let confirmText = "";
@@ -156,13 +159,14 @@ const updateStatus = async (bookingId: string, status: string) => {
           {/* Student Info */}
           <div className="flex items-center gap-4">
             {session.student.image ? (
-              <Image
-                src={session.student.image}
-                alt={session.student.name}
-                width={56}
-                height={56}
-                className="rounded-full object-cover"
-              />
+              <div className="relative w-14 h-14 flex-shrink-0">
+                <Image
+                  src={session.student.image}
+                  alt={session.student.name}
+                  fill
+                  className="rounded-full object-cover ring-2 ring-[#00B5BA]/30"
+                />
+              </div>
             ) : (
               <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold text-lg">
                 {session.student.name[0]}
@@ -217,6 +221,29 @@ const updateStatus = async (bookingId: string, status: string) => {
           </div>
         </div>
       ))}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-3 mt-6">
+          <button
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+            className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-40 transition"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+            className="px-4 py-2 rounded-lg bg-[#00B5BA] text-white hover:opacity-90 disabled:opacity-40 transition"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

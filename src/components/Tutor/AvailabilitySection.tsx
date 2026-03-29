@@ -97,7 +97,7 @@ export default function AvailabilitySection() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto space-y-10 px-0 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center">
         All Subjects
       </h1>
@@ -110,7 +110,7 @@ export default function AvailabilitySection() {
             <button
               key={subject.id}
               onClick={() => toggleSubject(subject.id)}
-              className={`px-4 py-2 rounded-lg border font-medium transition-all w-full text-center whitespace-nowrap ${
+              className={`px-1 py-2 rounded-lg border font-medium transition-all w-full text-center whitespace-nowrap ${
                 selectedSubjects.includes(subject.id)
                   ? "bg-[#00B5BA] text-white border-[#00B5BA] shadow-md"
                   : "bg-white text-gray-700 border-gray-300 hover:shadow-sm hover:border-[#00B5BA]"

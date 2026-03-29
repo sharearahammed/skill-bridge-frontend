@@ -5,49 +5,48 @@ import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Link from "next/link";
+import GoogleLoginButton from "./google-login-button";
 
 export default function LoginForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-const form = useForm({
-  defaultValues: {
-    email: "",
-    password: "",
-  },
-  onSubmit: async ({ value }) => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(value),
-        },
-      );
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    onSubmit: async ({ value }) => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(value),
+          },
+        );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Login failed");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Login failed");
 
-      // token localStorage এ save করো
-      localStorage.setItem("token", data.data.token);
+        localStorage.setItem("token", data.data.token);
+        document.cookie = `token=${data.data.token}; path=/; max-age=${7 * 24 * 60 * 60}`;
 
-      // token cookie তেও save করো (server-side এর জন্য)
-      document.cookie = `token=${data.data.token}; path=/; max-age=${7 * 24 * 60 * 60}`;
-
-      toast.success("Logged in successfully!");
-      router.push("/");
-      router.refresh();
-    } catch (err: unknown) {
-      if (err instanceof Error) toast.error(err.message);
-      else toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  },
-});
+        toast.success("Logged in successfully!");
+        router.push("/");
+        router.refresh();
+      } catch (err: unknown) {
+        if (err instanceof Error) toast.error(err.message);
+        else toast.error("Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -99,6 +98,16 @@ const form = useForm({
             )}
           </form.Field>
 
+          {/* Forgot Password */}
+          <div className="text-right -mt-2">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-[#00B5BA] hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
           {/* Submit Button */}
           <button
             type="submit"
@@ -109,15 +118,18 @@ const form = useForm({
           </button>
         </form>
 
+        {/* Google Login */}
+        <GoogleLoginButton />
+
         {/* Register Link */}
         <p className="mt-4 text-center text-gray-500 text-sm">
           Don&apos;t have an account?{" "}
-          <a
+          <Link
             href="/register"
             className="text-[#00B5BA] font-medium hover:underline"
           >
             Register
-          </a>
+          </Link>
         </p>
       </div>
     </div>

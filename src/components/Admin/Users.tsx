@@ -19,12 +19,14 @@ export type User = {
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users?page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -33,7 +35,8 @@ export default function UsersPage() {
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      setUsers(data.data);
+      setUsers(data.data.users);
+      setTotalPages(data.data.totalPages);
     } catch (err: unknown) {
       if (err instanceof Error) toast.error(err.message);
       else toast.error("Something went wrong");
@@ -87,7 +90,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page]);
 
   if (loading)
     return (
@@ -171,6 +174,29 @@ export default function UsersPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-3 mt-6">
+          <button
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+            className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-40 transition"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+            className="px-4 py-2 rounded-lg bg-[#00B5BA] text-white hover:opacity-90 disabled:opacity-40 transition"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }
